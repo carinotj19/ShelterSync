@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+*-lock.json
+
+# build
+build/
+dist/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+*.log
+
+# environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker overrides
+docker-compose.override.yml
