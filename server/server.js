@@ -16,7 +16,7 @@ app.get('/', (req, res) => res.send('API running'));
 
 app.use('/auth', require('./routes/auth'));
 app.use('/pets', require('./routes/pets'));
-app.use('/adopt', require('./routes/adoptions'));
+app.use('/adopt', require('./routes/adoption'));
 app.use('/image', require('./routes/images'));
 
 app.listen(process.env.PORT || 5000, () =>
