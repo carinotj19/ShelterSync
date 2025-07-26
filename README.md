@@ -15,8 +15,15 @@ MONGO_URI=mongodb://localhost/sheltersync
 JWT_SECRET=supersecret
 EMAIL_USER=you@example.com
 EMAIL_PASS=password
+EMAIL_SERVICE=gmail
+EMAIL_FROM=you@example.com
 PORT=5000
 ```
+
+The `EMAIL_SERVICE` and `EMAIL_FROM` settings are used by the nodemailer
+transport. For Gmail you may need to create an app password or enable
+"less secure" access. Update these variables with the credentials for
+your SMTP provider.
 
 Start the development environment:
 

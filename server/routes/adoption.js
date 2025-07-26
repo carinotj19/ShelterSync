@@ -3,15 +3,7 @@ const AdoptionRequest = require('../models/AdoptionRequest');
 const Pet = require('../models/Pet');
 const User = require('../models/User');
 const { auth } = require('./middleware');
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+const { sendEmail } = require('../utils/email');
 
 router.post('/:petId', auth('adopter'), async (req, res) => {
   try {
@@ -23,8 +15,7 @@ router.post('/:petId', auth('adopter'), async (req, res) => {
       message: req.body.message
     });
     // send email to shelter
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+    await sendEmail({
       to: pet.shelter.email,
       subject: 'New Adoption Request',
       text: `You have a new adoption request for ${pet.name}.`
