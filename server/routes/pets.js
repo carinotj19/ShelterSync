@@ -5,7 +5,13 @@ const mongoose = require('mongoose');
 const Pet = require('../models/Pet');
 const { auth } = require('./middleware');
 
-const storage = new GridFsStorage({ url: process.env.MONGO_URI });
+const storage = new GridFsStorage({
+  url: process.env.MONGO_URI,
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  file: (req, file) => ({
+    filename: `${Date.now()}-${file.originalname}`,
+  }),
+});
 const upload = multer({ storage });
 
 // Create pet
