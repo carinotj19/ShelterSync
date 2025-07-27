@@ -1,70 +1,80 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import PetCard from './PetCard';
 
 /**
- * Lists all pets and provides a simple search/filter form. Results are
- * pulled from the server via the public /pets endpoint. Clicking a pet
- * navigates to its detail page.
+ * Lists all pets and provides simple search/filter inputs. Results are
+ * fetched from the server via the public /pets endpoint. Pets are
+ * displayed in a responsive grid layout using PetCard components.
  */
-function PetList() {
+export default function PetList() {
   const [pets, setPets] = useState([]);
   const [breed, setBreed] = useState('');
   const [age, setAge] = useState('');
   const [location, setLocation] = useState('');
+  const [error, setError] = useState('');
 
   // Fetch pets from the API. Accepts an optional query string.
   const fetchPets = async (query = '') => {
-    const res = await fetch(`/pets${query}`);
-    const data = await res.json();
-    setPets(data);
+    try {
+      const res = await fetch(`/pets${query}`);
+      const data = await res.json();
+      if (res.ok) {
+        setPets(data);
+        setError('');
+      } else {
+        setError(data.error || 'Failed to fetch pets');
+      }
+    } catch (err) {
+      setError('Failed to fetch pets');
+    }
   };
 
+  // Load all pets on initial mount
   useEffect(() => {
     fetchPets('');
   }, []);
 
+  // Handle search/filter form submission
   const handleSearch = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
     if (breed) params.append('breed', breed);
     if (age) params.append('age', age);
     if (location) params.append('location', location);
-    fetchPets(`?${params.toString()}`);
+    const queryString = params.toString();
+    fetchPets(queryString ? `?${queryString}` : '');
   };
 
   return (
     <div>
       <h2>Available Pets</h2>
-      <form onSubmit={handleSearch} className="search-form">
+      <form className="search-form" onSubmit={handleSearch}>
         <input
-          placeholder="Breed"
+          type="text"
           value={breed}
+          placeholder="Breed"
           onChange={(e) => setBreed(e.target.value)}
         />
         <input
-          placeholder="Age"
           type="number"
           value={age}
+          placeholder="Age"
           onChange={(e) => setAge(e.target.value)}
         />
         <input
-          placeholder="Location"
+          type="text"
           value={location}
+          placeholder="Location"
           onChange={(e) => setLocation(e.target.value)}
         />
         <button type="submit">Search</button>
       </form>
-      <ul className="pets-list">
+      {error && <p className="message error">{error}</p>}
+      <div className="pet-grid">
         {pets.map((pet) => (
-          <li key={pet._id} className="pets-list-item">
-            <Link to={`/pets/${pet._id}`}>
-              {pet.name} {pet.breed ? `- ${pet.breed}` : ''} {pet.age ? `(${pet.age} yrs)` : ''}
-            </Link>
-          </li>
+          <PetCard key={pet._id || pet.id} pet={pet} />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
-
-export default PetList;

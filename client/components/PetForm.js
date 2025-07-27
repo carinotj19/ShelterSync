@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../src/AuthContext';
 
 /**
- * Form for shelters and admins to create new pet listings. File input
- * allows uploading an image which will be stored in GridFS on the
- * server. After successful creation the user is redirected to the pet
- * list.
+ * Form for shelters to create new pet listings. File input allows
+ * uploading an image which will be stored in GridFS on the server.
+ * After successful creation the user is redirected to the pet list.
  */
-function PetForm({ token }) {
+export default function PetForm() {
+  const { token } = useContext(AuthContext);
   const [name, setName] = useState('');
   const [breed, setBreed] = useState('');
   const [age, setAge] = useState('');
@@ -47,33 +48,37 @@ function PetForm({ token }) {
   return (
     <div>
       <h2>Add a Pet</h2>
-      <form onSubmit={handleSubmit} className="column-form medium">
+      <form onSubmit={handleSubmit}>
         <input
-          placeholder="Name"
+          type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
           required
         />
         <input
-          placeholder="Breed"
+          type="text"
           value={breed}
           onChange={(e) => setBreed(e.target.value)}
+          placeholder="Breed"
         />
         <input
           type="number"
-          placeholder="Age"
           value={age}
           onChange={(e) => setAge(e.target.value)}
+          placeholder="Age"
         />
         <input
-          placeholder="Location"
+          type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          placeholder="Location"
         />
         <textarea
-          placeholder="Health notes"
           value={healthNotes}
           onChange={(e) => setHealthNotes(e.target.value)}
+          placeholder="Health Notes"
+          rows={3}
         />
         <input
           type="file"
@@ -82,9 +87,7 @@ function PetForm({ token }) {
         />
         <button type="submit">Save</button>
       </form>
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="message error">{error}</p>}
     </div>
   );
 }
-
-export default PetForm;

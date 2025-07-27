@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../src/AuthContext';
 
 /**
  * Login form for authenticating existing users. On success the returned
- * token and role are stored both in parent state (via props) and
- * localStorage. After login the user is redirected to the pet list.
+ * token and role are stored in context and localStorage. After login
+ * the user is redirected to the pet list.
  */
-function Login({ setToken, setRole }) {
+export default function Login() {
+  const { setToken, setRole } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -28,8 +30,6 @@ function Login({ setToken, setRole }) {
       }
       setToken(data.token);
       setRole(data.role);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('role', data.role);
       navigate('/');
     } catch (err) {
       setError('Error logging in');
@@ -39,26 +39,24 @@ function Login({ setToken, setRole }) {
   return (
     <div>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} className="column-form small">
+      <form onSubmit={handleSubmit}>
         <input
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
           required
         />
         <input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
           required
         />
         <button type="submit">Login</button>
       </form>
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="message error">{error}</p>}
     </div>
   );
 }
-
-export default Login;

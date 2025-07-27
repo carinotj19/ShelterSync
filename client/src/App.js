@@ -1,53 +1,45 @@
-import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
+import NavBar from '../components/NavBar';
 import PetList from '../components/PetList';
 import PetDetail from '../components/PetDetail';
 import PetForm from '../components/PetForm';
 import Login from '../components/Login';
 import Signup from '../components/Signup';
+import './App.css';
 
+/**
+ * The root application component. It sets up the router, authentication
+ * context and defines the available routes. Public routes include the
+ * pet list, login and signup. Private routes are wrapped in
+ * ProtectedRoute and restricted by user role.
+ */
 function App() {
-	const [token, setToken] = useState(localStorage.getItem('token') || '');
-	const [role, setRole] = useState(localStorage.getItem('role') || '');
-
-	useEffect(() => {
-		if (token) localStorage.setItem('token', token);
-		if (role) localStorage.setItem('role', role);
-	}, [token, role]);
-
-	const logout = () => {
-		setToken('');
-		setRole('');
-		localStorage.removeItem('token');
-		localStorage.removeItem('role');
-	};
-
-	return (
-		<Router>
-			<nav className="nav-bar">
-				<Link to="/">Pets</Link>
-				{token ? (
-					<>
-						{role === 'shelter' && <Link to="/add">Add Pet</Link>}
-						<button onClick={logout}>Logout</button>
-					</>
-				) : (
-					<>
-						<Link to="/login">Login</Link>
-						<Link to="/signup">Signup</Link>
-					</>
-				)}
-			</nav>
-			<Routes>
-				<Route path="/" element={<PetList />} />
-				<Route path="/pets/:id" element={<PetDetail token={token} role={role} />} />
-				<Route path="/add" element={<PetForm token={token} />} />
-				<Route path="/login" element={<Login setToken={setToken} setRole={setRole} />} />
-				<Route path="/signup" element={<Signup />} />
-			</Routes>
-		</Router>
-	);
+  return (
+    <AuthProvider>
+      <Router>
+        <NavBar />
+        <main className="container">
+          <Routes>
+            <Route path="/" element={<PetList />} />
+            <Route path="/pets/:id" element={<PetDetail />} />
+            <Route
+              path="/add"
+              element={
+                <ProtectedRoute allowedRoles={['shelter']}>
+                  <PetForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
+        </main>
+      </Router>
+    </AuthProvider>
+  );
 }
 
 export default App;

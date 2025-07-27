@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
  * want to register as (adopter or shelter). After successful signup
  * the user is redirected to the login page.
  */
-function Signup() {
+export default function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,44 +38,44 @@ function Signup() {
   return (
     <div>
       <h2>Signup</h2>
-      <form onSubmit={handleSubmit} className="column-form small">
+      <form onSubmit={handleSubmit}>
         <input
-          placeholder="Name"
+          type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
           required
         />
         <input
           type="email"
-          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
           required
         />
         <input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
           required
         />
-        <label>
-          Role:
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
+        <div>
+          <label htmlFor="role">Role:</label>{' '}
+          <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="adopter">Adopter</option>
             <option value="shelter">Shelter</option>
           </select>
-        </label>
+        </div>
         <input
-          placeholder="Location"
+          type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
+          placeholder="Location"
         />
         <button type="submit">Signup</button>
       </form>
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="message error">{error}</p>}
     </div>
   );
 }
-
-export default Signup;

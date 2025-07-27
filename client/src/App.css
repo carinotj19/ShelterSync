@@ -1,45 +1,155 @@
-.search-form {
-  margin-bottom: 1rem;
+/* Layout */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-.pets-list {
-  list-style: none;
-  padding: 0;
+/* Navigation bar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.pets-list-item {
-  margin-bottom: 0.5rem;
+.navbar .brand {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #4a90e2;
+  text-decoration: none;
 }
 
-.pet-image {
-  max-width: 300px;
-  max-height: 300px;
+.navbar .links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar a {
+  color: #333333;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar a:hover {
+  color: #4a90e2;
+}
+
+.navbar .auth-buttons button {
+  background-color: transparent;
+  border: none;
+  color: #4a90e2;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar .auth-buttons button:hover {
+  text-decoration: underline;
+}
+
+/* Forms */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+form input,
+form select,
+form textarea {
+  padding: 0.5rem;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+form button {
+  padding: 0.6rem 1rem;
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #367ec3;
+}
+
+/* Grid of pet cards */
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.pet-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.pet-card:hover {
+  transform: translateY(-4px);
+}
+
+.pet-card img {
+  width: 100%;
+  height: 160px;
   object-fit: cover;
 }
 
-.column-form {
+.pet-card .card-content {
+  padding: 0.75rem;
+}
+
+.pet-card h3 {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #333333;
+}
+
+.pet-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666666;
+}
+
+.search-form {
   display: flex;
-  flex-direction: column;
-}
-
-.column-form.small {
-  max-width: 300px;
-}
-
-.column-form.medium {
-  max-width: 400px;
-}
-
-.error-message {
-  color: red;
-}
-
-.success-message {
-  color: green;
-}
-
-.nav-bar {
-  display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.search-form input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.message {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #e53935;
+}
+
+.success {
+  color: #388e3c;
 }
