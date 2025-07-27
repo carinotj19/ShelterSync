@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../src/AuthContext';
-import '../src/App.css';
+import { AuthContext } from '../AuthContext';
 
 /**
  * Top navigation bar. Shows navigation links to the pet list, add pet,

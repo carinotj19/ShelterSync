@@ -2,12 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
-import NavBar from '../components/NavBar';
-import PetList from '../components/PetList';
-import PetDetail from '../components/PetDetail';
-import PetForm from '../components/PetForm';
-import Login from '../components/Login';
-import Signup from '../components/Signup';
+import NavBar from './components/NavBar';
+import PetList from './components/PetList';
+import PetDetail from './components/PetDetail';
+import PetForm from './components/PetForm';
+import Login from './components/Login';
+import Signup from './components/Signup';
 import './App.css';
 
 /**

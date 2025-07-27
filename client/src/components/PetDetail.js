@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { AuthContext } from '../src/AuthContext';
+import { AuthContext } from '../AuthContext';
 
 /**
  * Shows detailed information for a single pet. Adopters can submit an
