@@ -47,7 +47,7 @@ function PetForm({ token }) {
   return (
     <div>
       <h2>Add a Pet</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px' }}>
+      <form onSubmit={handleSubmit} className="column-form medium">
         <input
           placeholder="Name"
           value={name}
@@ -82,7 +82,7 @@ function PetForm({ token }) {
         />
         <button type="submit">Save</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }

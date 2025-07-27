@@ -35,7 +35,7 @@ function PetList() {
   return (
     <div>
       <h2>Available Pets</h2>
-      <form onSubmit={handleSearch} style={{ marginBottom: '1rem' }}>
+      <form onSubmit={handleSearch} className="search-form">
         <input
           placeholder="Breed"
           value={breed}
@@ -54,9 +54,9 @@ function PetList() {
         />
         <button type="submit">Search</button>
       </form>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className="pets-list">
         {pets.map((pet) => (
-          <li key={pet._id} style={{ marginBottom: '0.5rem' }}>
+          <li key={pet._id} className="pets-list-item">
             <Link to={`/pets/${pet._id}`}>
               {pet.name} {pet.breed ? `- ${pet.breed}` : ''} {pet.age ? `(${pet.age} yrs)` : ''}
             </Link>

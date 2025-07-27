@@ -39,7 +39,7 @@ function Login({ setToken, setRole }) {
   return (
     <div>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px' }}>
+      <form onSubmit={handleSubmit} className="column-form small">
         <input
           type="email"
           placeholder="Email"
@@ -56,7 +56,7 @@ function Login({ setToken, setRole }) {
         />
         <button type="submit">Login</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }

@@ -25,7 +25,7 @@ function App() {
 
 	return (
 		<Router>
-			<nav style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+			<nav className="nav-bar">
 				<Link to="/">Pets</Link>
 				{token ? (
 					<>

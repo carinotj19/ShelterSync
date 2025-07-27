@@ -38,7 +38,7 @@ function Signup() {
   return (
     <div>
       <h2>Signup</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px' }}>
+      <form onSubmit={handleSubmit} className="column-form small">
         <input
           placeholder="Name"
           value={name}
@@ -73,7 +73,7 @@ function Signup() {
         />
         <button type="submit">Signup</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }

@@ -54,7 +54,7 @@ function PetDetail({ token, role }) {
         <img
           src={pet.imageURL}
           alt={pet.name}
-          style={{ maxWidth: '300px', maxHeight: '300px', objectFit: 'cover' }}
+          className="pet-image"
         />
       )}
       <p>Breed: {pet.breed || 'Unknown'}</p>
@@ -62,7 +62,7 @@ function PetDetail({ token, role }) {
       <p>Location: {pet.location || 'Unknown'}</p>
       <p>{pet.healthNotes}</p>
       {role === 'adopter' && (
-        <form onSubmit={handleAdopt} style={{ display: 'flex', flexDirection: 'column', maxWidth: '400px' }}>
+        <form onSubmit={handleAdopt} className="column-form medium">
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
@@ -72,8 +72,8 @@ function PetDetail({ token, role }) {
           <button type="submit">Send Adoption Request</button>
         </form>
       )}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }
