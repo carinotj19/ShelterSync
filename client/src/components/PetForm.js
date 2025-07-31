@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 
@@ -29,7 +29,7 @@ export default function PetForm() {
     if (healthNotes) formData.append('healthNotes', healthNotes);
     if (image) formData.append('image', image);
     try {
-      const res = await fetch('/pets', {
+      const res = await fetch('/api/pets', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

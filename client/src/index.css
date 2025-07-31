@@ -2,16 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.bg-waves {
+  @apply bg-gradient-to-br from-blue-100 via-white to-green-100 relative overflow-hidden;
+}
+.bg-waves::before {
+  content: "";
+  @apply absolute w-[200%] h-[300px] bg-blue-300/20;
+  top: -100px; left: -50%;
+  clip-path: ellipse(75% 100% at 50% 0%);
+}
+.bg-waves::after {
+  content: "";
+  @apply absolute w-[200%] h-[260px] bg-green-200/20;
+  bottom: -80px; right: -50%;
+  clip-path: ellipse(70% 100% at 50% 100%);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ─── 3. Blurred blob utility (optional) ─── */
+.blob {
+  @apply absolute rounded-full filter blur-[100px] opacity-30;
 }

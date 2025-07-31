@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 
@@ -17,7 +17,7 @@ export default function PetDetail() {
 
   // Fetch the pet details on mount
   useEffect(() => {
-    fetch(`/pets/${id}`)
+    fetch(`/api/pets/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setPet(data);
@@ -32,7 +32,7 @@ export default function PetDetail() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`/adopt/${id}`, {
+      const res = await fetch(`/api/adopt/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
