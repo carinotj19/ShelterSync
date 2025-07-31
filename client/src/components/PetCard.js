@@ -1,35 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-/**
- * Displays a single pet in card form. Clicking on the card navigates to
- * the pet's detail page. Provides a placeholder image when no imageURL
- * is available.
- */
 export default function PetCard({ pet }) {
-  const {
-    _id,
-    id,
-    name,
-    breed,
-    age,
-    location,
-    imageURL,
-  } = pet;
-
-  const defaultImage = 'https://via.placeholder.com/400x300?text=No+Image';
-
   return (
-    <div className="pet-card">
-      <Link to={`/pets/${_id || id}`}>
-        <img src={imageURL || defaultImage} alt={name} />
-        <div className="card-content">
-          <h3>{name}</h3>
-          <p>{breed || 'Unknown breed'}</p>
-          <p>{age != null ? `${age} yrs` : 'Age unknown'}</p>
-          <p>{location || 'Location unknown'}</p>
-        </div>
-      </Link>
-    </div>
+    <Link
+      to={`/pets/${pet.id}`}
+      className="bg-white rounded-xl shadow hover:shadow-lg transform hover:-translate-y-1 transition p-4 flex flex-col"
+    >
+      <div className="h-40 w-full bg-gray-100 rounded-md overflow-hidden mb-4">
+        <img
+          src={pet.imageUrl || '/placeholder.png'}
+          alt={pet.breed}
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <h3 className="text-lg font-medium text-gray-800">{pet.breed}</h3>
+      <p className="text-gray-500">{pet.age} years old</p>
+      <p className="text-gray-500 mb-4">{pet.location}</p>
+      <span className="mt-auto inline-block bg-brand text-white text-center px-3 py-1 rounded-lg">
+        View Details
+      </span>
+    </Link>
   );
 }
