@@ -1,34 +1,74 @@
 import { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
+import { HiEye, HiEyeOff, HiMail, HiLockClosed, HiSparkles } from 'react-icons/hi';
 import AuthLayout from './AuthLayout';
 import { AuthContext } from '../AuthContext';
 import toast from 'react-hot-toast';
 
 export default function Login() {
   const { setToken, setRole } = useContext(AuthContext);
-  const [form, setForm]       = useState({ email:'', password:'' });
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const handleChange = e =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
+  };
 
-  const handleSubmit = async e => {
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!form.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    
+    if (!form.password) {
+      newErrors.password = 'Password is required';
+    } else if (form.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/auth/login', {
         method: 'POST',
-        headers:{ 'Content-Type':'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
+      
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Login failed');
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+      
       setToken(data.token);
       setRole(data.role);
-      toast.success('Welcome back!');
-    } catch(err) {
+      toast.success('Welcome back! 🎉');
+      navigate('/');
+    } catch (err) {
       toast.error(err.message);
-    } finally{
+      setErrors({ general: err.message });
+    } finally {
       setLoading(false);
     }
   };
@@ -36,121 +76,154 @@ export default function Login() {
   return (
     <AuthLayout
       title="Welcome back"
+      subtitle="Sign in to your account to continue"
       illustration="/images/pets-hero.png"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* ——— Floating label email ——— */}
-        <div className="relative z-0">
-          <input
-            type="email"
-            name="email"
-            id="email"
-            placeholder=" "
-            required
-            value={form.email}
-            onChange={handleChange}
-            className="
-              peer block w-full border-0 border-b-2 border-gray-300
-              bg-transparent px-0 py-2 text-gray-900
-              focus:border-brand focus:outline-none focus:ring-0
-              transition
-            "
-          />
-          <label
-            htmlFor="email"
-            className="
-              absolute left-0 top-2 origin-[0] -translate-y-6 scale-75
-              transform text-gray-500 duration-300
-              peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100
-              peer-focus:-translate-y-6 peer-focus:scale-75
-            "
-          >
-            Email address
+        {/* General Error */}
+        {errors.general && (
+          <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-xl text-sm">
+            {errors.general}
+          </div>
+        )}
+
+        {/* Email Field */}
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-sm font-medium text-neutral-700">
+            Email Address
           </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <HiMail className="h-5 w-5 text-neutral-400" />
+            </div>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              required
+              value={form.email}
+              onChange={handleChange}
+              className={`
+                input pl-10 w-full
+                ${errors.email ? 'input-error' : ''}
+              `}
+              placeholder="Enter your email"
+            />
+          </div>
+          {errors.email && (
+            <p className="text-error text-xs mt-1">{errors.email}</p>
+          )}
         </div>
 
-        {/* ——— Floating label password ——— */}
-        <div className="relative z-0">
-          <input
-            type="password"
-            name="password"
-            id="password"
-            placeholder=" "
-            required
-            value={form.password}
-            onChange={handleChange}
-            className="
-              peer block w-full border-0 border-b-2 border-gray-300
-              bg-transparent px-0 py-2 text-gray-900
-              focus:border-brand focus:outline-none focus:ring-0
-              transition
-            "
-          />
-          <label
-            htmlFor="password"
-            className="
-              absolute left-0 top-2 origin-[0] -translate-y-6 scale-75
-              transform text-gray-500 duration-300
-              peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100
-              peer-focus:-translate-y-6 peer-focus:scale-75
-            "
-          >
+        {/* Password Field */}
+        <div className="space-y-2">
+          <label htmlFor="password" className="block text-sm font-medium text-neutral-700">
             Password
           </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <HiLockClosed className="h-5 w-5 text-neutral-400" />
+            </div>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              id="password"
+              required
+              value={form.password}
+              onChange={handleChange}
+              className={`
+                input pl-10 pr-10 w-full
+                ${errors.password ? 'input-error' : ''}
+              `}
+              placeholder="Enter your password"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600"
+            >
+              {showPassword ? (
+                <HiEyeOff className="h-5 w-5" />
+              ) : (
+                <HiEye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
+          {errors.password && (
+            <p className="text-error text-xs mt-1">{errors.password}</p>
+          )}
         </div>
 
-        {/* ——— Remember + forgot ——— */}
-        <div className="flex justify-between text-sm">
-          <label className="flex items-center space-x-2">
-            <input type="checkbox" className="h-4 w-4 text-brand" />
-            <span className="text-gray-600">Remember me</span>
+        {/* Remember Me & Forgot Password */}
+        <div className="flex items-center justify-between">
+          <label className="flex items-center space-x-2 cursor-pointer">
+            <input
+              type="checkbox"
+              className="w-4 h-4 text-brand border-neutral-300 rounded focus:ring-brand focus:ring-2"
+            />
+            <span className="text-sm text-neutral-600">Remember me</span>
           </label>
-          <a href="/forgot" className="text-brand hover:underline">
-            Forgot?
-          </a>
+          <Link
+            to="/forgot-password"
+            className="text-sm text-brand hover:text-brand-600 font-medium transition-colors"
+          >
+            Forgot password?
+          </Link>
         </div>
 
-        {/* ——— Submit button ——— */}
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
           className={`
-            w-full flex justify-center items-center space-x-2
-            rounded-lg py-2 font-medium transition
-            ${loading
-              ? 'bg-gray-300 cursor-not-allowed text-gray-600'
-              : 'bg-brand hover:bg-brand-hover text-white'}
+            btn-primary w-full flex items-center justify-center space-x-2 py-3
+            ${loading ? 'opacity-50 cursor-not-allowed' : ''}
           `}
         >
-          {loading ? 'Signing in…' : 'Log in'}
+          {loading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Signing in...</span>
+            </>
+          ) : (
+            <>
+              <HiSparkles className="w-5 h-5" />
+              <span>Sign In</span>
+            </>
+          )}
         </button>
 
-        {/* ——— Or divider ——— */}
-        <div className="flex items-center">
-          <span className="h-px flex-1 bg-gray-200" />
-          <span className="px-3 text-gray-400">or</span>
-          <span className="h-px flex-1 bg-gray-200" />
+        {/* Divider */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-neutral-200" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-4 bg-white text-neutral-500">Or continue with</span>
+          </div>
         </div>
 
-        {/* ——— Social login ——— */}
+        {/* Social Login */}
         <button
           type="button"
-          className="
-            w-full inline-flex items-center justify-center space-x-2
-            border border-gray-300 rounded-lg py-2 hover:shadow
-            transition
-          "
+          className="btn-outline w-full flex items-center justify-center space-x-3 py-3 hover:bg-neutral-50"
         >
-          <FcGoogle size={20} />
+          <FcGoogle className="w-5 h-5" />
           <span>Continue with Google</span>
         </button>
 
-        <p className="text-center text-sm text-gray-600">
-          Don’t have an account?{' '}
-          <a href="/signup" className="text-brand hover:underline">
-            Sign up
-          </a>
-        </p>
+        {/* Sign Up Link */}
+        <div className="text-center">
+          <p className="text-sm text-neutral-600">
+            Don't have an account?{' '}
+            <Link
+              to="/signup"
+              className="font-medium text-brand hover:text-brand-600 transition-colors"
+            >
+              Sign up for free
+            </Link>
+          </p>
+        </div>
       </form>
     </AuthLayout>
   );
