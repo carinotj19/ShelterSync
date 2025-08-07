@@ -21,6 +21,7 @@ app.get('/', (req, res) => res.send('API running'));
 
 // Import and mount route handlers
 app.use('/auth', require('./routes/auth'));
+app.use('/auth/admin', require('./routes/admin'));
 app.use('/pets', require('./routes/pets'));
 app.use('/adopt', require('./routes/adoption'));
 app.use('/image', require('./routes/images'));

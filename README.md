@@ -1,6 +1,15 @@
 # ShelterSync
 ShelterSync is a MERN stack pet adoption platform. It features user authentication with JWT, CRUD APIs for pet profiles with image upload using GridFS, search and filter capabilities, and an adoption request workflow that emails shelters when someone is interested in a pet.
 
+## Features
+
+- **User Roles**: Three distinct user types - Adopters, Shelters, and Admins
+- **Pet Management**: Shelters can add, edit, and delete pet profiles with images
+- **Adoption Workflow**: Complete adoption request system with email notifications
+- **Admin Dashboard**: Comprehensive admin panel for platform management
+- **Search & Filter**: Find pets by breed, age, and location
+- **Responsive Design**: Mobile-friendly interface using Tailwind CSS
+
 ## Setup
 
 ```bash
@@ -31,52 +40,112 @@ Start the development environment:
 npm run dev
 ```
 
+## Creating an Admin User
+
+To create an admin user, run the seed script:
+
+```bash
+cd server
+node scripts/seedAdmin.js
+```
+
+This will create an admin user with:
+- Email: `admin@sheltersync.com`
+- Password: `admin123`
+
+**Important**: Change the password after first login!
+
+## User Roles & Features
+
+### Adopters
+- Browse available pets
+- Submit adoption requests
+- View status of their adoption requests
+- Receive email notifications on request updates
+
+### Shelters
+- Add new pets to the platform
+- Edit/delete their own pets
+- View and manage adoption requests for their pets
+- Approve or reject adoption requests
+- Receive email notifications for new requests
+
+### Admins
+- Access comprehensive admin dashboard
+- View platform statistics
+- Manage all users (view, delete)
+- Manage all pets (view, delete)
+- Monitor all adoption requests
+- Full platform oversight
+
 ## Project Structure
 
 ```
 server/
-  models/      Mongoose models
-  routes/      Express route handlers
-  server.js    API entry
+  models/         Mongoose models (User, Pet, AdoptionRequest)
+  routes/         Express route handlers
+    auth.js       Authentication routes
+    admin.js      Admin management routes
+    pets.js       Pet CRUD operations
+    adoption.js   Adoption request management
+    images.js     Image upload/retrieval
+  scripts/        Utility scripts
+  server.js       API entry point
 client/
-  src/         React application
+  src/
+    components/   React components
+      AdminDashboard.js      Admin panel
+      AdoptionRequests.js    Shelter request management
+      MyAdoptionRequests.js  Adopter request view
+      PetList.js            Browse pets
+      PetDetail.js          Pet details & adoption
+      PetForm.js            Add/edit pets
+    App.js        Main app with routing
+    AuthContext.js Authentication context
 ```
 
-## Sample API Route
+## API Routes
 
-```http
-GET /pets?breed=husky&age=2
-```
-Returns all husky pets that are two years old.
+### Authentication
+- `POST /auth/signup` - Register new user
+- `POST /auth/login` - User login
 
-## React Component Example
+### Pets
+- `GET /pets` - List all pets (with filters)
+- `GET /pets/:id` - Get pet details
+- `POST /pets` - Add new pet (shelter only)
+- `PUT /pets/:id` - Update pet (shelter only)
+- `DELETE /pets/:id` - Delete pet (shelter only)
 
-```jsx
-import { useEffect, useState } from 'react';
+### Adoption Requests
+- `POST /adopt/:petId` - Submit adoption request
+- `GET /adopt/shelter/requests` - Get shelter's requests
+- `GET /adopt/my-requests` - Get user's requests
+- `PATCH /adopt/:requestId/status` - Update request status
 
-export default function PetList() {
-  const [pets, setPets] = useState([]);
-  useEffect(() => {
-    fetch('/pets')
-      .then(res => res.json())
-      .then(setPets);
-  }, []);
-  return (
-    <ul>
-      {pets.map(p => (
-        <li key={p._id}>{p.name} - {p.breed}</li>
-      ))}
-    </ul>
-  );
-}
-```
+### Admin
+- `GET /auth/admin/users` - List all users
+- `DELETE /auth/admin/users/:id` - Delete user
+- `GET /auth/admin/stats` - Platform statistics
+- `GET /adopt/admin/all` - All adoption requests
 
 ## Mongoose Schemas
+
+`User` model:
+```js
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, enum: ['adopter', 'shelter', 'admin'], default: 'adopter' },
+  location: String
+});
+```
 
 `Pet` model:
 ```js
 const petSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   breed: String,
   age: Number,
   healthNotes: String,

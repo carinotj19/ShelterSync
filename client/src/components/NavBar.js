@@ -3,10 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 
 /**
- * Top navigation bar. Shows navigation links to the pet list, add pet,
- * login and signup pages. When a user is authenticated it shows a
- * logout button instead of login/signup. Shelter users also see an
- * option to add a pet.
+ * Top navigation bar. Shows navigation links based on user role.
+ * - All users see the pet list
+ * - Adopters see their adoption requests
+ * - Shelters see options to add pets and manage adoption requests
+ * - Admins see the admin dashboard
+ * When authenticated, shows a logout button; otherwise shows login/signup.
  */
 export default function NavBar() {
   const { token, role, logout } = useContext(AuthContext);
@@ -24,13 +26,35 @@ export default function NavBar() {
       </Link>
       <div className="links">
         <Link to="/">Pets</Link>
-        {token && role === 'shelter' && <Link to="/add">Add Pet</Link>}
+        
+        {/* Adopter-specific links */}
+        {token && role === 'adopter' && (
+          <Link to="/my-requests">My Requests</Link>
+        )}
+        
+        {/* Shelter-specific links */}
+        {token && role === 'shelter' && (
+          <>
+            <Link to="/add">Add Pet</Link>
+            <Link to="/adoption-requests">Adoption Requests</Link>
+          </>
+        )}
+        
+        {/* Admin-specific links */}
+        {token && role === 'admin' && (
+          <Link to="/admin">Admin Dashboard</Link>
+        )}
       </div>
       <div className="auth-buttons">
         {token ? (
-          <button type="button" onClick={handleLogout}>
-            Logout
-          </button>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">
+              {role === 'admin' ? 'Admin' : role === 'shelter' ? 'Shelter' : 'Adopter'}
+            </span>
+            <button type="button" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         ) : (
           <>
             <Link to="/login">Login</Link>

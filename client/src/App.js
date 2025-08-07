@@ -8,6 +8,9 @@ import PetDetail from './components/PetDetail';
 import PetForm from './components/PetForm';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import AdoptionRequests from './components/AdoptionRequests';
+import MyAdoptionRequests from './components/MyAdoptionRequests';
+import AdminDashboard from './components/AdminDashboard';
 import './App.css';
 
 /**
@@ -30,6 +33,30 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['shelter']}>
                   <PetForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/adoption-requests"
+              element={
+                <ProtectedRoute allowedRoles={['shelter']}>
+                  <AdoptionRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-requests"
+              element={
+                <ProtectedRoute allowedRoles={['adopter']}>
+                  <MyAdoptionRequests />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <AdminDashboard />
                 </ProtectedRoute>
               }
             />
