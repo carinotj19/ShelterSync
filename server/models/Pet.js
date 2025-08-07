@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const petSchema = new mongoose.Schema({
-  name: { 
-    type: String, 
+  name: {
+    type: String,
     required: [true, 'Pet name is required'],
     trim: true,
     maxlength: [50, 'Pet name cannot exceed 50 characters']
@@ -31,8 +31,8 @@ const petSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Location cannot exceed 100 characters']
   },
-  shelter: { 
-    type: mongoose.Schema.Types.ObjectId, 
+  shelter: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Shelter information is required']
   },
@@ -111,10 +111,18 @@ petSchema.index({
 
 // Virtual for age group
 petSchema.virtual('ageGroup').get(function() {
-  if (!this.age) return 'unknown';
-  if (this.age < 1) return 'puppy/kitten';
-  if (this.age < 3) return 'young';
-  if (this.age < 7) return 'adult';
+  if (!this.age) {
+    return 'unknown';
+  }
+  if (this.age < 1) {
+    return 'puppy/kitten';
+  }
+  if (this.age < 3) {
+    return 'young';
+  }
+  if (this.age < 7) {
+    return 'adult';
+  }
   return 'senior';
 });
 
@@ -124,24 +132,24 @@ petSchema.pre('save', function(next) {
   if (this.isModified('status') && this.status === 'adopted' && !this.adoptedAt) {
     this.adoptedAt = new Date();
   }
-  
+
   // Clear adoptedAt and adoptedBy if status changes from adopted
   if (this.isModified('status') && this.status !== 'adopted') {
     this.adoptedAt = undefined;
     this.adoptedBy = undefined;
   }
-  
+
   next();
 });
 
 // Static method for search
 petSchema.statics.search = function(query, filters = {}) {
   const searchQuery = { status: 'available', ...filters };
-  
+
   if (query) {
     searchQuery.$text = { $search: query };
   }
-  
+
   return this.find(searchQuery)
     .populate('shelter', 'name location')
     .sort({ featured: -1, createdAt: -1 });
@@ -151,7 +159,7 @@ petSchema.statics.search = function(query, filters = {}) {
 petSchema.statics.getAvailable = function(page = 1, limit = 10, filters = {}) {
   const skip = (page - 1) * limit;
   const searchQuery = { status: 'available', ...filters };
-  
+
   return this.find(searchQuery)
     .populate('shelter', 'name location')
     .sort({ featured: -1, createdAt: -1 })

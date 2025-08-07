@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
 const adoptionRequestSchema = new mongoose.Schema({
-  pet: { 
-    type: mongoose.Schema.Types.ObjectId, 
+  pet: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Pet',
     required: [true, 'Pet reference is required']
   },
-  adopter: { 
-    type: mongoose.Schema.Types.ObjectId, 
+  adopter: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: [true, 'Adopter reference is required']
   },
@@ -23,13 +23,13 @@ const adoptionRequestSchema = new mongoose.Schema({
     minlength: [10, 'Message must be at least 10 characters long'],
     maxlength: [1000, 'Message cannot exceed 1000 characters']
   },
-  status: { 
-    type: String, 
+  status: {
+    type: String,
     enum: {
       values: ['pending', 'approved', 'rejected', 'withdrawn'],
       message: 'Status must be pending, approved, rejected, or withdrawn'
-    }, 
-    default: 'pending' 
+    },
+    default: 'pending'
   },
   shelterResponse: {
     type: String,
@@ -116,7 +116,9 @@ adoptionRequestSchema.virtual('ageInDays').get(function() {
 
 // Virtual for response time in hours (if responded)
 adoptionRequestSchema.virtual('responseTimeHours').get(function() {
-  if (!this.respondedAt) return null;
+  if (!this.respondedAt) {
+    return null;
+  }
   return Math.floor((this.respondedAt - this.createdAt) / (1000 * 60 * 60));
 });
 
@@ -126,20 +128,30 @@ adoptionRequestSchema.pre('save', function(next) {
   if (this.isModified('status') && this.status !== 'pending' && !this.respondedAt) {
     this.respondedAt = new Date();
   }
-  
+
   // Auto-set priority based on adopter info
   if (this.isNew && this.adopterInfo) {
     let priorityScore = 0;
-    
-    if (this.adopterInfo.experience && this.adopterInfo.experience.length > 100) priorityScore++;
-    if (this.adopterInfo.hasYard) priorityScore++;
-    if (this.adopterInfo.livingSpace === 'house' || this.adopterInfo.livingSpace === 'farm') priorityScore++;
-    
-    if (priorityScore >= 2) this.priority = 'high';
-    else if (priorityScore === 1) this.priority = 'medium';
-    else this.priority = 'low';
+
+    if (this.adopterInfo.experience && this.adopterInfo.experience.length > 100) {
+      priorityScore++;
+    }
+    if (this.adopterInfo.hasYard) {
+      priorityScore++;
+    }
+    if (this.adopterInfo.livingSpace === 'house' || this.adopterInfo.livingSpace === 'farm') {
+      priorityScore++;
+    }
+
+    if (priorityScore >= 2) {
+      this.priority = 'high';
+    } else if (priorityScore === 1) {
+      this.priority = 'medium';
+    } else {
+      this.priority = 'low';
+    }
   }
-  
+
   next();
 });
 
@@ -147,9 +159,11 @@ adoptionRequestSchema.pre('save', function(next) {
 adoptionRequestSchema.statics.getForShelter = function(shelterId, status = null, page = 1, limit = 10) {
   const skip = (page - 1) * limit;
   const query = { shelter: shelterId };
-  
-  if (status) query.status = status;
-  
+
+  if (status) {
+    query.status = status;
+  }
+
   return this.find(query)
     .populate('pet', 'name breed age imageURL')
     .populate('adopter', 'name email location')
@@ -161,7 +175,7 @@ adoptionRequestSchema.statics.getForShelter = function(shelterId, status = null,
 // Static method to get requests for an adopter
 adoptionRequestSchema.statics.getForAdopter = function(adopterId, page = 1, limit = 10) {
   const skip = (page - 1) * limit;
-  
+
   return this.find({ adopter: adopterId })
     .populate('pet', 'name breed age imageURL')
     .populate('shelter', 'name location')

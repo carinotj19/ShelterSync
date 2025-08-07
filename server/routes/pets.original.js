@@ -9,8 +9,8 @@ const storage = new GridFsStorage({
   url: process.env.MONGO_URI,
   options: { useNewUrlParser: true, useUnifiedTopology: true },
   file: (req, file) => ({
-    filename: `${Date.now()}-${file.originalname}`,
-  }),
+    filename: `${Date.now()}-${file.originalname}`
+  })
 });
 const upload = multer({ storage });
 
@@ -32,9 +32,15 @@ router.post('/', auth('shelter'), upload.single('image'), async (req, res) => {
 router.get('/', async (req, res) => {
   const { breed, age, location } = req.query;
   const q = {};
-  if (breed) q.breed = breed;
-  if (age) q.age = Number(age);
-  if (location) q.location = location;
+  if (breed) {
+    q.breed = breed;
+  }
+  if (age) {
+    q.age = Number(age);
+  }
+  if (location) {
+    q.location = location;
+  }
   const pets = await Pet.find(q);
   res.json(pets);
 });
@@ -42,17 +48,24 @@ router.get('/', async (req, res) => {
 // Get single pet
 router.get('/:id', async (req, res) => {
   const pet = await Pet.findById(req.params.id);
-  if (!pet) return res.status(404).json({ error: 'Not found' });
+  if (!pet) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   res.json(pet);
 });
 
 // Update pet
 router.put('/:id', auth('shelter'), upload.single('image'), async (req, res) => {
   const pet = await Pet.findById(req.params.id);
-  if (!pet) return res.status(404).json({ error: 'Not found' });
-  if (String(pet.shelter) !== req.user.id && req.user.role !== 'admin')
+  if (!pet) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  if (String(pet.shelter) !== req.user.id && req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Forbidden' });
-  if (req.file) req.body.imageURL = `/image/${req.file.id}`;
+  }
+  if (req.file) {
+    req.body.imageURL = `/image/${req.file.id}`;
+  }
   Object.assign(pet, req.body);
   await pet.save();
   res.json(pet);
@@ -61,9 +74,12 @@ router.put('/:id', auth('shelter'), upload.single('image'), async (req, res) => 
 // Delete pet
 router.delete('/:id', auth('shelter'), async (req, res) => {
   const pet = await Pet.findById(req.params.id);
-  if (!pet) return res.status(404).json({ error: 'Not found' });
-  if (String(pet.shelter) !== req.user.id && req.user.role !== 'admin')
+  if (!pet) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  if (String(pet.shelter) !== req.user.id && req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Forbidden' });
+  }
   await pet.deleteOne();
   res.sendStatus(204);
 });

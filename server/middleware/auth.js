@@ -85,7 +85,7 @@ const checkOwnership = (getResourceUserId) => {
     }
 
     const resourceUserId = await getResourceUserId(req);
-    
+
     if (!resourceUserId) {
       throw new AuthorizationError('Resource not found or access denied.');
     }
@@ -107,12 +107,14 @@ const checkOwnership = (getResourceUserId) => {
 function auth(requiredRole) {
   return (req, res, next) => {
     authenticate(req, res, (err) => {
-      if (err) return next(err);
-      
+      if (err) {
+        return next(err);
+      }
+
       if (requiredRole && req.user.role !== requiredRole && req.user.role !== 'admin') {
         return next(new AuthorizationError('Insufficient permissions.'));
       }
-      
+
       next();
     });
   };
@@ -122,5 +124,5 @@ module.exports = {
   auth, // Keep for backward compatibility
   authenticate,
   authorize,
-  checkOwnership,
+  checkOwnership
 };

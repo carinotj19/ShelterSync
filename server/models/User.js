@@ -3,33 +3,33 @@ const bcrypt = require('bcrypt');
 const config = require('../config/config');
 
 const userSchema = new mongoose.Schema({
-  name: { 
-    type: String, 
+  name: {
+    type: String,
     required: [true, 'Name is required'],
     trim: true,
     maxlength: [50, 'Name cannot exceed 50 characters']
   },
-  email: { 
-    type: String, 
-    required: [true, 'Email is required'], 
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
     unique: true,
     lowercase: true,
     trim: true,
     match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email']
   },
-  password: { 
-    type: String, 
+  password: {
+    type: String,
     required: [true, 'Password is required'],
     minlength: [8, 'Password must be at least 8 characters long'],
     select: false // Don't include password in queries by default
   },
-  role: { 
-    type: String, 
+  role: {
+    type: String,
     enum: {
       values: ['adopter', 'shelter', 'admin'],
       message: 'Role must be either adopter, shelter, or admin'
-    }, 
-    default: 'adopter' 
+    },
+    default: 'adopter'
   },
   location: {
     type: String,
@@ -90,7 +90,9 @@ userSchema.virtual('isLocked').get(function() {
 // Pre-save middleware to hash password
 userSchema.pre('save', async function(next) {
   // Only run this function if password was actually modified
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) {
+    return next();
+  }
 
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, config.bcrypt.rounds);
@@ -126,14 +128,14 @@ userSchema.methods.incLoginAttempts = function() {
       $set: { loginAttempts: 1 }
     });
   }
-  
+
   const updates = { $inc: { loginAttempts: 1 } };
-  
+
   // Lock account after 5 failed attempts for 2 hours
   if (this.loginAttempts + 1 >= 5 && !this.isLocked) {
     updates.$set = { lockUntil: Date.now() + 2 * 60 * 60 * 1000 }; // 2 hours
   }
-  
+
   return this.updateOne(updates);
 };
 

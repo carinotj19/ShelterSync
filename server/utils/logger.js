@@ -6,7 +6,7 @@ const levels = {
   warn: 1,
   info: 2,
   http: 3,
-  debug: 4,
+  debug: 4
 };
 
 // Define colors for each level
@@ -15,7 +15,7 @@ const colors = {
   warn: 'yellow',
   info: 'green',
   http: 'magenta',
-  debug: 'white',
+  debug: 'white'
 };
 
 // Tell winston that you want to link the colors
@@ -31,7 +31,7 @@ const transports = [
       winston.format.printf(
         (info) => `${info.timestamp} ${info.level}: ${info.message}`
       )
-    ),
+    )
   }),
   // File transport for errors
   new winston.transports.File({
@@ -40,7 +40,7 @@ const transports = [
     format: winston.format.combine(
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
       winston.format.json()
-    ),
+    )
   }),
   // File transport for all logs
   new winston.transports.File({
@@ -48,22 +48,22 @@ const transports = [
     format: winston.format.combine(
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
       winston.format.json()
-    ),
-  }),
+    )
+  })
 ];
 
 // Create the logger
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   levels,
-  transports,
+  transports
 });
 
 // Create a stream object with a 'write' function that will be used by morgan
 logger.stream = {
   write: (message) => {
     logger.http(message.trim());
-  },
+  }
 };
 
 module.exports = logger;

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders available pets heading', () => {
+test('renders available pets heading', async () => {
   render(<App />);
-  const heading = screen.getByText(/available pets/i);
+  const heading = await screen.findByText(/available pets/i);
   expect(heading).toBeInTheDocument();
 });

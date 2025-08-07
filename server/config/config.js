@@ -34,31 +34,31 @@ const config = {
   port: envVars.PORT,
   mongoose: {
     url: envVars.MONGO_URI,
-    options: {},
+    options: {}
   },
   jwt: {
     secret: envVars.JWT_SECRET,
-    expiresIn: envVars.JWT_EXPIRES_IN,
+    expiresIn: envVars.JWT_EXPIRES_IN
   },
   email: {
     service: envVars.EMAIL_SERVICE,
     user: envVars.EMAIL_USER,
-    pass: envVars.EMAIL_PASS,
+    pass: envVars.EMAIL_PASS
   },
   logging: {
-    level: envVars.LOG_LEVEL,
+    level: envVars.LOG_LEVEL
   },
   rateLimit: {
     windowMs: envVars.RATE_LIMIT_WINDOW_MS,
-    max: envVars.RATE_LIMIT_MAX_REQUESTS,
+    max: envVars.RATE_LIMIT_MAX_REQUESTS
   },
   bcrypt: {
-    rounds: envVars.BCRYPT_ROUNDS,
+    rounds: envVars.BCRYPT_ROUNDS
   },
   upload: {
     maxFileSize: envVars.MAX_FILE_SIZE,
-    allowedTypes: envVars.ALLOWED_FILE_TYPES.split(','),
-  },
+    allowedTypes: envVars.ALLOWED_FILE_TYPES.split(',')
+  }
 };
 
 module.exports = config;

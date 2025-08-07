@@ -10,15 +10,15 @@ const logger = require('../utils/logger');
 router.use(authLimiter);
 
 // Signup
-router.post('/signup', 
+router.post('/signup',
   validate(userSignupSchema),
   catchAsync(async (req, res) => {
     const user = await UserService.createUser(req.body);
-    
-    logger.info('User signup successful', { 
-      userId: user._id, 
+
+    logger.info('User signup successful', {
+      userId: user._id,
       email: user.email,
-      role: user.role 
+      role: user.role
     });
 
     res.status(201).json({
@@ -45,9 +45,9 @@ router.post('/login',
     const { email, password } = req.body;
     const result = await UserService.authenticateUser(email, password);
 
-    logger.info('User login successful', { 
-      userId: result.user.id, 
-      email: result.user.email 
+    logger.info('User login successful', {
+      userId: result.user.id,
+      email: result.user.email
     });
 
     res.json({
@@ -99,7 +99,7 @@ router.patch('/change-password',
   authenticate,
   catchAsync(async (req, res) => {
     const { currentPassword, newPassword } = req.body;
-    
+
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
         status: 'fail',
@@ -122,7 +122,7 @@ router.patch('/change-password',
 router.post('/forgot-password',
   catchAsync(async (req, res) => {
     const { email } = req.body;
-    
+
     if (!email) {
       return res.status(400).json({
         status: 'fail',
@@ -144,7 +144,7 @@ router.patch('/reset-password/:token',
   catchAsync(async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
-    
+
     if (!password) {
       return res.status(400).json({
         status: 'fail',

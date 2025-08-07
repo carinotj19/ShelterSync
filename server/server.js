@@ -84,7 +84,7 @@ app.get('/health', (req, res) => {
     environment: config.env,
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   };
-  
+
   res.status(200).json(healthCheck);
 });
 
@@ -107,7 +107,7 @@ app.use('/api/image', require('./routes/images'));
 // Serve static files in production
 if (config.env === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
-  
+
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build/index.html'));
   });

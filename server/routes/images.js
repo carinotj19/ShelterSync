@@ -10,7 +10,9 @@ mongoose.connection.once('open', () => {
 router.get('/:id', async (req, res) => {
   try {
     const file = await gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) });
-    if (!file) return res.status(404).send('Not found');
+    if (!file) {
+      return res.status(404).send('Not found');
+    }
     const readstream = gfs.createReadStream(file.filename);
     res.set('Content-Type', file.contentType);
     readstream.pipe(res);

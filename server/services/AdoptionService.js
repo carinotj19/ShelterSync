@@ -463,7 +463,9 @@ class AdoptionService {
 
   // Send adoption request notification email
   static async sendAdoptionRequestNotification(request) {
-    if (!request.shelter.email) return;
+    if (!request.shelter.email) {
+      return;
+    }
 
     await sendEmail({
       to: request.shelter.email,
@@ -486,7 +488,9 @@ class AdoptionService {
 
   // Send approval email
   static async sendApprovalEmail(request) {
-    if (!request.adopter.email) return;
+    if (!request.adopter.email) {
+      return;
+    }
 
     await sendEmail({
       to: request.adopter.email,
@@ -503,7 +507,9 @@ class AdoptionService {
 
   // Send rejection email
   static async sendRejectionEmail(request) {
-    if (!request.adopter.email) return;
+    if (!request.adopter.email) {
+      return;
+    }
 
     await sendEmail({
       to: request.adopter.email,

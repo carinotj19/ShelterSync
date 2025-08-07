@@ -18,15 +18,15 @@ const storage = new GridFsStorage({
     if (!config.upload.allowedTypes.includes(file.mimetype)) {
       throw new Error('Invalid file type. Only images are allowed.');
     }
-    
+
     return {
       filename: `${Date.now()}-${file.originalname}`,
       bucketName: 'uploads'
     };
-  },
+  }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage,
   limits: {
     fileSize: config.upload.maxFileSize
@@ -45,7 +45,7 @@ router.get('/',
   validate(petQuerySchema, 'query'),
   catchAsync(async (req, res) => {
     const { page, limit, search, ...filters } = req.query;
-    
+
     const result = await PetService.getPets(
       filters,
       parseInt(page) || 1,
@@ -99,7 +99,7 @@ router.get('/shelter/:shelterId',
   catchAsync(async (req, res) => {
     const { shelterId } = req.params;
     const { page, limit, status } = req.query;
-    
+
     const result = await PetService.getPetsByShelter(
       shelterId,
       parseInt(page) || 1,
@@ -225,7 +225,7 @@ router.patch('/:id/adopt',
   authorize('shelter', 'admin'),
   catchAsync(async (req, res) => {
     const { adopterId } = req.body;
-    
+
     if (!adopterId) {
       return res.status(400).json({
         status: 'fail',
@@ -293,14 +293,14 @@ router.use((error, req, res, next) => {
       message: 'File upload error: ' + error.message
     });
   }
-  
+
   if (error.message.includes('Invalid file type')) {
     return res.status(400).json({
       status: 'fail',
       message: error.message
     });
   }
-  
+
   next(error);
 });
 

@@ -12,7 +12,7 @@ const createRateLimiter = (windowMs = config.rateLimit.windowMs, max = config.ra
     max,
     message: {
       status: 'error',
-      message,
+      message
     },
     standardHeaders: true,
     legacyHeaders: false,
@@ -20,9 +20,9 @@ const createRateLimiter = (windowMs = config.rateLimit.windowMs, max = config.ra
       logger.warn(`Rate limit exceeded for IP: ${req.ip}`);
       res.status(429).json({
         status: 'error',
-        message,
+        message
       });
-    },
+    }
   });
 };
 
@@ -47,13 +47,13 @@ const uploadLimiter = createRateLimiter(
 const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"],
-    },
+      defaultSrc: ['\'self\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\''],
+      scriptSrc: ['\'self\''],
+      imgSrc: ['\'self\'', 'data:', 'https:']
+    }
   },
-  crossOriginEmbedderPolicy: false,
+  crossOriginEmbedderPolicy: false
 });
 
 // Data sanitization middleware
@@ -95,7 +95,7 @@ const sanitizeObject = (obj) => {
 // Request logging middleware
 const requestLogger = (req, res, next) => {
   const start = Date.now();
-  
+
   res.on('finish', () => {
     const duration = Date.now() - start;
     const logData = {
@@ -104,7 +104,7 @@ const requestLogger = (req, res, next) => {
       status: res.statusCode,
       duration: `${duration}ms`,
       ip: req.ip,
-      userAgent: req.get('User-Agent'),
+      userAgent: req.get('User-Agent')
     };
 
     if (res.statusCode >= 400) {
@@ -121,12 +121,14 @@ const requestLogger = (req, res, next) => {
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const allowedOrigins = process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(',')
       : ['http://localhost:3000', 'http://localhost:3001'];
-    
+
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -135,7 +137,7 @@ const corsOptions = {
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200,
+  optionsSuccessStatus: 200
 };
 
 module.exports = {
@@ -146,5 +148,5 @@ module.exports = {
   sanitizeData,
   requestLogger,
   corsOptions,
-  mongoSanitize: mongoSanitize(),
+  mongoSanitize: mongoSanitize()
 };

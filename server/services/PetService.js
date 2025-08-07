@@ -19,10 +19,10 @@ class PetService {
       const pet = await Pet.create(petInfo);
       await pet.populate('shelter', 'name location');
 
-      logger.info('Pet created successfully', { 
-        petId: pet._id, 
-        shelterId, 
-        petName: pet.name 
+      logger.info('Pet created successfully', {
+        petId: pet._id,
+        shelterId,
+        petName: pet.name
       });
 
       return pet;
@@ -36,7 +36,7 @@ class PetService {
   static async getPets(filters = {}, page = 1, limit = 10, search = '') {
     try {
       const skip = (page - 1) * limit;
-      let query = { status: 'available' };
+      const query = { status: 'available' };
 
       // Apply filters
       if (filters.breed) {
@@ -81,11 +81,11 @@ class PetService {
       const pets = await petsQuery.skip(skip).limit(limit);
       const total = await Pet.countDocuments(search ? { ...query, $text: { $search: search } } : query);
 
-      logger.info('Pets retrieved successfully', { 
-        count: pets.length, 
-        total, 
-        page, 
-        search: search || 'none' 
+      logger.info('Pets retrieved successfully', {
+        count: pets.length,
+        total,
+        page,
+        search: search || 'none'
       });
 
       return {
@@ -107,7 +107,7 @@ class PetService {
   static async getPetById(petId) {
     try {
       const pet = await Pet.findById(petId).populate('shelter', 'name email location');
-      
+
       if (!pet) {
         throw new NotFoundError('Pet not found');
       }
@@ -126,7 +126,7 @@ class PetService {
   static async updatePet(petId, updateData, userId, userRole, imageFile = null) {
     try {
       const pet = await Pet.findById(petId);
-      
+
       if (!pet) {
         throw new NotFoundError('Pet not found');
       }
@@ -146,10 +146,10 @@ class PetService {
       await pet.save();
       await pet.populate('shelter', 'name location');
 
-      logger.info('Pet updated successfully', { 
-        petId, 
-        userId, 
-        updatedFields: Object.keys(updateData) 
+      logger.info('Pet updated successfully', {
+        petId,
+        userId,
+        updatedFields: Object.keys(updateData)
       });
 
       return pet;
@@ -165,7 +165,7 @@ class PetService {
   static async deletePet(petId, userId, userRole) {
     try {
       const pet = await Pet.findById(petId);
-      
+
       if (!pet) {
         throw new NotFoundError('Pet not found');
       }
@@ -197,7 +197,7 @@ class PetService {
     try {
       const skip = (page - 1) * limit;
       const query = { shelter: shelterId };
-      
+
       if (status) {
         query.status = status;
       }
@@ -209,10 +209,10 @@ class PetService {
 
       const total = await Pet.countDocuments(query);
 
-      logger.info('Shelter pets retrieved successfully', { 
-        shelterId, 
-        count: pets.length, 
-        total 
+      logger.info('Shelter pets retrieved successfully', {
+        shelterId,
+        count: pets.length,
+        total
       });
 
       return {
@@ -234,7 +234,7 @@ class PetService {
   static async markAsAdopted(petId, adopterId, userId, userRole) {
     try {
       const pet = await Pet.findById(petId);
-      
+
       if (!pet) {
         throw new NotFoundError('Pet not found');
       }
@@ -263,9 +263,9 @@ class PetService {
   // Get featured pets
   static async getFeaturedPets(limit = 6) {
     try {
-      const pets = await Pet.find({ 
-        status: 'available', 
-        featured: true 
+      const pets = await Pet.find({
+        status: 'available',
+        featured: true
       })
         .populate('shelter', 'name location')
         .sort({ createdAt: -1 })
@@ -283,7 +283,7 @@ class PetService {
   static async toggleFeatured(petId, userId, userRole) {
     try {
       const pet = await Pet.findById(petId);
-      
+
       if (!pet) {
         throw new NotFoundError('Pet not found');
       }
@@ -296,10 +296,10 @@ class PetService {
       pet.featured = !pet.featured;
       await pet.save();
 
-      logger.info('Pet featured status toggled', { 
-        petId, 
-        userId, 
-        featured: pet.featured 
+      logger.info('Pet featured status toggled', {
+        petId,
+        userId,
+        featured: pet.featured
       });
 
       return pet;

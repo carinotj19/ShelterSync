@@ -59,5 +59,5 @@ module.exports = {
   AuthorizationError,
   NotFoundError,
   ConflictError,
-  DatabaseError,
+  DatabaseError
 };

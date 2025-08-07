@@ -8,7 +8,9 @@ const { sendEmail } = require('../utils/email');
 router.post('/:petId', auth('adopter'), async (req, res) => {
   try {
     const pet = await Pet.findById(req.params.petId).populate('shelter');
-    if (!pet) return res.status(404).json({ error: 'Pet not found' });
+    if (!pet) {
+      return res.status(404).json({ error: 'Pet not found' });
+    }
     const request = await AdoptionRequest.create({
       pet: pet._id,
       adopter: req.user.id,

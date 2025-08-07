@@ -18,7 +18,7 @@ class UserService {
 
       // Create user
       const user = await User.create(userData);
-      
+
       // Generate email verification token if email service is configured
       if (config.email.user && config.email.pass) {
         const verificationToken = crypto.randomBytes(32).toString('hex');
@@ -46,7 +46,7 @@ class UserService {
     try {
       // Find user with password and login attempt fields
       const user = await User.findForAuth(email);
-      
+
       if (!user) {
         throw new AuthenticationError('Invalid email or password');
       }
@@ -58,7 +58,7 @@ class UserService {
 
       // Check password
       const isPasswordCorrect = await user.correctPassword(password, user.password);
-      
+
       if (!isPasswordCorrect) {
         // Increment login attempts
         await user.incLoginAttempts();
@@ -74,7 +74,7 @@ class UserService {
       const token = this.generateToken(user._id, user.role);
 
       logger.info('User authenticated successfully', { userId: user._id, email: user.email });
-      
+
       return {
         token,
         user: {
@@ -181,7 +181,7 @@ class UserService {
   // Reset password with token
   static async resetPassword(token, newPassword) {
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-    
+
     const user = await User.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() }
@@ -258,7 +258,7 @@ class UserService {
   // Send verification email
   static async sendVerificationEmail(email, token) {
     const verificationUrl = `${process.env.CLIENT_URL}/verify-email/${token}`;
-    
+
     await sendEmail({
       to: email,
       subject: 'Verify Your Email - ShelterSync',
@@ -275,7 +275,7 @@ class UserService {
   // Send password reset email
   static async sendPasswordResetEmail(email, token) {
     const resetUrl = `${process.env.CLIENT_URL}/reset-password/${token}`;
-    
+
     await sendEmail({
       to: email,
       subject: 'Password Reset - ShelterSync',
