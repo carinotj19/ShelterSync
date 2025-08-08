@@ -113,7 +113,12 @@ class UserService {
   // Update user profile
   static async updateUser(userId, updateData) {
     // Remove sensitive fields that shouldn't be updated directly
-    const { password, role, active, loginAttempts, lockUntil, ...allowedUpdates } = updateData;
+    const allowedUpdates = { ...updateData };
+    delete allowedUpdates.password;
+    delete allowedUpdates.role;
+    delete allowedUpdates.active;
+    delete allowedUpdates.loginAttempts;
+    delete allowedUpdates.lockUntil;
 
     const user = await User.findByIdAndUpdate(
       userId,

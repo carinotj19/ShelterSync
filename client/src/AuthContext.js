@@ -1,4 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * A context for storing the authenticated user's token and role.
@@ -8,9 +9,9 @@ import React, { createContext, useEffect, useState } from 'react';
 export const AuthContext = createContext({
   token: '',
   role: '',
-  setToken: () => {},
-  setRole: () => {},
-  logout: () => {},
+  setToken: () => { },
+  setRole: () => { },
+  logout: () => { },
 });
 
 export function AuthProvider({ children }) {
@@ -45,3 +46,7 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired
+};

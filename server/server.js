@@ -1,3 +1,4 @@
+/* eslint-disable no-process-exit */
 // Load environment variables from .env
 require('dotenv').config();
 

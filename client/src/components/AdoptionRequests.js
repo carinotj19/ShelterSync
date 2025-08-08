@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import { AuthContext } from '../AuthContext';
 import toast from 'react-hot-toast';
 
@@ -15,7 +15,7 @@ export default function AdoptionRequests() {
   const [updating, setUpdating] = useState(null);
 
   // Fetch adoption requests for the shelter
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     try {
       const res = await fetch('/adopt/shelter/requests', {
         headers: {
@@ -33,11 +33,11 @@ export default function AdoptionRequests() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     fetchRequests();
-  }, [token]);
+  }, [fetchRequests]);
 
   // Update request status
   const updateRequestStatus = async (requestId, status) => {

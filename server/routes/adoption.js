@@ -6,165 +6,8 @@ const { authenticate, authorize } = require('../middleware/auth');
 const logger = require('../utils/logger');
 
 // Create adoption request
-router.post('/:petId', auth('adopter'), async (req, res) => {
-  try {
-    const pet = await Pet.findById(req.params.petId).populate('shelter');
-    if (!pet) {
-      return res.status(404).json({ error: 'Pet not found' });
-    }
-
-    // Check if user already has a pending request for this pet
-    const existingRequest = await AdoptionRequest.findOne({
-      pet: pet._id,
-      adopter: req.user.id,
-      status: 'pending'
-    });
-
-    if (existingRequest) {
-      return res.status(400).json({ error: 'You already have a pending request for this pet' });
-    }
-
-    const request = await AdoptionRequest.create({
-      pet: pet._id,
-      adopter: req.user.id,
-      message: req.body.message
-    });
-
-    // send email to shelter
-    await sendEmail({
-      to: pet.shelter.email,
-      subject: 'New Adoption Request',
-      text: `You have a new adoption request for ${pet.name}.\n\nMessage from adopter: ${req.body.message}`
-    });
-
-    res.json(request);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Get all adoption requests for a shelter
-router.get('/shelter/requests', auth('shelter'), async (req, res) => {
-  try {
-    // Find all pets belonging to this shelter
-    const shelterPets = await Pet.find({ shelter: req.user.id }).select('_id');
-    const petIds = shelterPets.map(pet => pet._id);
-
-    // Find all adoption requests for these pets
-    const requests = await AdoptionRequest.find({ pet: { $in: petIds } })
-      .populate('pet', 'name breed imageURL')
-      .populate('adopter', 'name email location')
-      .sort('-createdAt');
-
-    res.json(requests);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Get adoption requests for a specific pet (shelter only)
-router.get('/pet/:petId', auth('shelter'), async (req, res) => {
-  try {
-    const pet = await Pet.findById(req.params.petId);
-    if (!pet) {
-      return res.status(404).json({ error: 'Pet not found' });
-    }
-
-    // Verify the pet belongs to this shelter
-    if (String(pet.shelter) !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-
-    const requests = await AdoptionRequest.find({ pet: req.params.petId })
-      .populate('adopter', 'name email location')
-      .sort('-createdAt');
-
-    res.json(requests);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Get user's adoption requests
-router.get('/my-requests', auth('adopter'), async (req, res) => {
-  try {
-    const requests = await AdoptionRequest.find({ adopter: req.user.id })
-      .populate('pet', 'name breed imageURL location')
-      .sort('-createdAt');
-
-    res.json(requests);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Update adoption request status (shelter only)
-router.patch('/:requestId/status', auth('shelter'), async (req, res) => {
-  try {
-    const { status } = req.body;
-    if (!['approved', 'rejected'].includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
-    }
-
-    const request = await AdoptionRequest.findById(req.params.requestId)
-      .populate('pet')
-      .populate('adopter');
-
-    if (!request) {
-      return res.status(404).json({ error: 'Request not found' });
-    }
-
-    // Verify the pet belongs to this shelter
-    if (String(request.pet.shelter) !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-
-    request.status = status;
-    await request.save();
-
-    // Send email to adopter about the decision
-    const emailSubject = status === 'approved'
-      ? `Your adoption request for ${request.pet.name} has been approved!`
-      : `Update on your adoption request for ${request.pet.name}`;
-
-    const emailText = status === 'approved'
-      ? `Great news! Your adoption request for ${request.pet.name} has been approved. The shelter will contact you soon with next steps.`
-      : `Thank you for your interest in ${request.pet.name}. Unfortunately, your adoption request has not been approved at this time.`;
-
-    await sendEmail({
-      to: request.adopter.email,
-      subject: emailSubject,
-      text: emailText
-    });
-
-    res.json(request);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Admin: Get all adoption requests
-router.get('/admin/all', auth('admin'), async (req, res) => {
-  try {
-    const requests = await AdoptionRequest.find()
-      .populate('pet', 'name breed')
-      .populate('adopter', 'name email')
-      .populate({
-        path: 'pet',
-        populate: {
-          path: 'shelter',
-          select: 'name email'
-        }
-      })
-      .sort('-createdAt');
-
-    res.json(requests);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-// Create adoption request
-router.post('/:petId',
+router.post(
+  '/:petId',
   authenticate,
   authorize('adopter'),
   validate(adoptionRequestSchema),
@@ -195,7 +38,8 @@ router.post('/:petId',
 );
 
 // Get adoption requests for current user
-router.get('/my-requests',
+router.get(
+  '/my-requests',
   authenticate,
   catchAsync(async (req, res) => {
     const { page, limit, status } = req.query;
@@ -233,7 +77,8 @@ router.get('/my-requests',
 );
 
 // Get adoption requests for a specific shelter (shelter/admin only)
-router.get('/shelter/:shelterId',
+router.get(
+  '/shelter/:shelterId',
   authenticate,
   authorize('shelter', 'admin'),
   catchAsync(async (req, res) => {
@@ -266,7 +111,8 @@ router.get('/shelter/:shelterId',
 );
 
 // Get single adoption request by ID
-router.get('/:requestId',
+router.get(
+  '/:requestId',
   authenticate,
   catchAsync(async (req, res) => {
     const { requestId } = req.params;
@@ -287,7 +133,8 @@ router.get('/:requestId',
 );
 
 // Approve adoption request (shelter only)
-router.patch('/:requestId/approve',
+router.patch(
+  '/:requestId/approve',
   authenticate,
   authorize('shelter', 'admin'),
   catchAsync(async (req, res) => {
@@ -316,7 +163,8 @@ router.patch('/:requestId/approve',
 );
 
 // Reject adoption request (shelter only)
-router.patch('/:requestId/reject',
+router.patch(
+  '/:requestId/reject',
   authenticate,
   authorize('shelter', 'admin'),
   catchAsync(async (req, res) => {
@@ -345,7 +193,8 @@ router.patch('/:requestId/reject',
 );
 
 // Withdraw adoption request (adopter only)
-router.patch('/:requestId/withdraw',
+router.patch(
+  '/:requestId/withdraw',
   authenticate,
   authorize('adopter'),
   catchAsync(async (req, res) => {
@@ -372,7 +221,8 @@ router.patch('/:requestId/withdraw',
 );
 
 // Add note to adoption request
-router.post('/:requestId/notes',
+router.post(
+  '/:requestId/notes',
   authenticate,
   catchAsync(async (req, res) => {
     const { requestId } = req.params;
@@ -408,7 +258,8 @@ router.post('/:requestId/notes',
 );
 
 // Get adoption statistics
-router.get('/statistics/overview',
+router.get(
+  '/statistics/overview',
   authenticate,
   authorize('shelter', 'admin'),
   catchAsync(async (req, res) => {
@@ -425,7 +276,8 @@ router.get('/statistics/overview',
 );
 
 // Bulk operations for adoption requests (admin only)
-router.patch('/bulk/update-status',
+router.patch(
+  '/bulk/update-status',
   authenticate,
   authorize('admin'),
   catchAsync(async (req, res) => {
@@ -453,9 +305,17 @@ router.patch('/bulk/update-status',
       try {
         let result;
         if (status === 'approved') {
-          result = await AdoptionService.approveRequest(requestId, req.user._id, response);
+          result = await AdoptionService.approveRequest(
+            requestId,
+            req.user._id,
+            response
+          );
         } else {
-          result = await AdoptionService.rejectRequest(requestId, req.user._id, response);
+          result = await AdoptionService.rejectRequest(
+            requestId,
+            req.user._id,
+            response
+          );
         }
         results.push(result);
       } catch (error) {
@@ -482,14 +342,11 @@ router.patch('/bulk/update-status',
 );
 
 // Get adoption request analytics (admin only)
-router.get('/analytics/trends',
+router.get(
+  '/analytics/trends',
   authenticate,
   authorize('admin'),
   catchAsync(async (req, res) => {
-    const { startDate, endDate, groupBy = 'month' } = req.query;
-
-    // This would typically involve more complex aggregation queries
-    // For now, return basic statistics
     const stats = await AdoptionService.getAdoptionStatistics();
 
     res.json({

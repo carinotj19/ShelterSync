@@ -19,7 +19,7 @@ const strongPassword = yup
 
 const phoneNumber = yup
   .string()
-  .matches(/^\+?[\d\s\-\(\)]+$/, 'Please enter a valid phone number')
+  .matches(/^\+?[\d\s()-]+$/, 'Please enter a valid phone number')
   .test('min-length', 'Phone number must be at least 10 digits', (value) => {
     if (!value) return true; // Let required() handle empty values
     return value.replace(/\D/g, '').length >= 10;
@@ -212,11 +212,11 @@ export const validateAge = (birthDate) => {
   if (!birthDate) return false;
   const today = new Date();
   const birth = new Date(birthDate);
-  const age = today.getFullYear() - birth.getFullYear();
+  let age = today.getFullYear() - birth.getFullYear();
   const monthDiff = today.getMonth() - birth.getMonth();
   
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
+    age -= 1;
   }
   
   return age >= 18;
@@ -320,7 +320,7 @@ export const createValidationSchema = (fields) => {
   return yup.object(schemaFields);
 };
 
-export default {
+const validationSchemas = {
   loginSchema,
   signupSchema,
   profileUpdateSchema,
@@ -343,3 +343,5 @@ export default {
   errorMessages,
   createValidationSchema,
 };
+
+export default validationSchemas;

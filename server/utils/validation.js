@@ -20,7 +20,7 @@ const userSignupSchema = Joi.object({
     }),
   password: Joi.string()
     .min(8)
-    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])'))
+    .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])'))
     .required()
     .messages({
       'string.min': 'Password must be at least 8 characters long',

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PetCard from './PetCard';
 import { 
@@ -23,7 +23,7 @@ export default function PetList() {
   const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
 
-  const fetchPets = async () => {
+  const fetchPets = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -42,7 +42,7 @@ export default function PetList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [query, sortBy, filterBy]);
 
   // Update URL params when filters change
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function PetList() {
 
   useEffect(() => {
     fetchPets();
-  }, [query, sortBy, filterBy]);
+  }, [fetchPets]);
 
   // Memoized filtered and sorted pets
   const processedPets = useMemo(() => {
