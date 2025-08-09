@@ -2,13 +2,13 @@ import { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { AuthContext } from '../AuthContext';
-import { 
-  HiMenu, 
-  HiX, 
-  HiHome, 
-  HiPlus, 
-  HiLogin, 
-  HiUserAdd, 
+import {
+  HiMenu,
+  HiX,
+  HiHome,
+  HiPlus,
+  HiLogin,
+  HiUserAdd,
   HiLogout,
   HiHeart,
   HiUser
@@ -49,8 +49,8 @@ export default function NavBar() {
       onClick={onClick}
       className={`
         group relative flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200
-        ${isActive(to) 
-          ? 'text-brand bg-brand/10 shadow-soft' 
+        ${isActive(to)
+          ? 'text-brand bg-brand/10 shadow-soft'
           : 'text-neutral-600 hover:text-brand hover:bg-brand/5'
         }
       `}
@@ -76,8 +76,8 @@ export default function NavBar() {
       onClick={onClick}
       className={`
         flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200
-        ${isActive(to) 
-          ? 'text-brand bg-brand/10 border-l-4 border-brand' 
+        ${isActive(to)
+          ? 'text-brand bg-brand/10 border-l-4 border-brand'
           : 'text-neutral-700 hover:text-brand hover:bg-brand/5'
         }
       `}
@@ -96,18 +96,21 @@ export default function NavBar() {
 
   return (
     <>
-      <nav className={`
-        fixed top-0 left-0 right-0 z-50 transition-all duration-300
-        ${scrolled 
-          ? 'glass shadow-medium backdrop-blur-xl' 
-          : 'bg-white/80 backdrop-blur-md shadow-soft'
-        }
-      `}>
-        <div className="container-custom">
+      <nav
+        className={`
+          fixed top-0 left-0 right-0 z-50 border-b border-neutral-200
+          transition-all duration-300
+          ${scrolled
+            ? 'bg-white/90 backdrop-blur-lg shadow-md'
+            : 'bg-white/60 backdrop-blur-lg'
+          }
+        `}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="flex items-center space-x-2 group"
             >
               <div className="w-8 h-8 bg-gradient-to-br from-brand to-accent rounded-xl flex items-center justify-center shadow-soft group-hover:shadow-brand transition-all duration-300">
@@ -123,7 +126,7 @@ export default function NavBar() {
               <NavLink to="/" icon={HiHome}>
                 Pets
               </NavLink>
-              
+
               {token && role === 'shelter' && (
                 <NavLink to="/add" icon={HiPlus}>
                   Add Pet
@@ -141,7 +144,7 @@ export default function NavBar() {
                       {role}
                     </span>
                   </div>
-                  
+
                   <button
                     onClick={handleLogout}
                     className="btn-danger flex items-center space-x-2 px-4 py-2"
@@ -185,7 +188,7 @@ export default function NavBar() {
             <MobileNavLink to="/" icon={HiHome} onClick={() => setOpen(false)}>
               Pets
             </MobileNavLink>
-            
+
             {token && role === 'shelter' && (
               <MobileNavLink to="/add" icon={HiPlus} onClick={() => setOpen(false)}>
                 Add Pet
@@ -204,7 +207,7 @@ export default function NavBar() {
                       <p className="text-xs text-neutral-500 capitalize">{role} account</p>
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-error hover:bg-error/5 transition-all duration-200"

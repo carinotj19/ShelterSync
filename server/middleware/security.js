@@ -118,23 +118,30 @@ const requestLogger = (req, res, next) => {
 };
 
 // CORS configuration
+const parseAllowed = (env) =>
+  (env ? env.split(',') : ['http://localhost:3000', 'http://localhost:3001'])
+    .map(s => s.trim().replace(/\/+$/, '').toLowerCase());
+
+const allowedOrigins = parseAllowed(process.env.ALLOWED_ORIGINS);
+
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+  origin(origin, callback) {
+    // allow curl/mobile apps/etc.
     if (!origin) {
       return callback(null, true);
     }
 
-    const allowedOrigins = process.env.ALLOWED_ORIGINS
-      ? process.env.ALLOWED_ORIGINS.split(',')
-      : ['http://localhost:3000', 'http://localhost:3001'];
+    const cleanOrigin = origin.replace(/\/+$/, '').toLowerCase();
 
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      logger.warn(`CORS blocked request from origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(cleanOrigin)) {
+      return callback(null, true);
     }
+
+    logger.warn(`CORS blocked request from origin: ${cleanOrigin}`);
+    // Avoid noisy 500s in dev; return false so CORS headers are omitted.
+    return callback(null, false);
+    // If you really want an error:
+    // return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   optionsSuccessStatus: 200
