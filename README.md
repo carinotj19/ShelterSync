@@ -55,6 +55,17 @@ This will create an admin user with:
 
 **Important**: Change the password after first login!
 
+## Seeding Sample Data
+
+Populate the database with sample shelters, adopters, pets, and adoption requests:
+
+```bash
+npm run seed --prefix server
+```
+
+This script clears existing data and inserts a large dataset for testing.
+
+
 ## User Roles & Features
 
 ### Adopters
