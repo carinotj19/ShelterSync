@@ -140,13 +140,13 @@ module.exports = {
         'glow-lg': '0 0 40px rgba(14, 165, 233, 0.2)',
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-        'slide-down': 'slideDown 0.3s ease-out',
-        'scale-in': 'scaleIn 0.2s ease-out',
-        'bounce-soft': 'bounceSoft 0.6s ease-in-out',
-        'pulse-soft': 'pulseSoft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'float': 'float 3s ease-in-out infinite',
+        'fade-in': 'fadeIn 0.7s ease-in-out',
+        'slide-up': 'slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-down': 'slideDown 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        'scale-in': 'scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        'bounce-soft': 'bounceSoft 0.8s ease-in-out',
+        'pulse-soft': 'pulseSoft 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'float': 'float 4s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {

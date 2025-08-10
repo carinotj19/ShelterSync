@@ -35,7 +35,7 @@ export default function PetCard({ pet }) {
   const statusBadge = getStatusBadge(pet.status || pet.adoptionStatus);
 
   return (
-    <div className="group card-interactive animate-fade-in-up">
+    <div className="group card animate-fade-in-up">
       <Link to={`/pets/${pet.id}`} className="block">
         {/* Image Container */}
         <div className="relative h-48 w-full bg-neutral-100 overflow-hidden">
@@ -53,7 +53,7 @@ export default function PetCard({ pet }) {
             }
             alt={`${pet.name || pet.breed} - Available for adoption`}
             className={`
-              h-full w-full object-cover transition-all duration-500 group-hover:scale-110
+              h-full w-full object-cover transition-all duration-500 ease-in-out group-hover:scale-110
               ${imageLoaded ? 'opacity-100' : 'opacity-0'}
             `}
             onLoad={() => setImageLoaded(true)}
@@ -84,7 +84,7 @@ export default function PetCard({ pet }) {
           <button
             onClick={handleLikeClick}
             className={`
-              absolute top-3 right-3 z-10 p-2 rounded-full backdrop-blur-sm transition-all duration-200
+              absolute top-3 right-3 z-10 p-2 rounded-full backdrop-blur-sm transition-all duration-300 ease-in-out
               ${isLiked
                 ? 'bg-error/90 text-white shadow-brand'
                 : 'bg-white/90 text-neutral-600 hover:bg-white hover:text-error'
@@ -99,8 +99,8 @@ export default function PetCard({ pet }) {
           </button>
 
           {/* Hover Overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-            <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+          <div className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 ease-in-out flex items-center justify-center">
+            <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out transform translate-y-4 group-hover:translate-y-0">
               <div className="bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-large">
                 <HiEye className="w-6 h-6 text-brand" />
               </div>
@@ -112,7 +112,7 @@ export default function PetCard({ pet }) {
         <div className="p-5">
           {/* Pet Name & Breed */}
           <div className="mb-3">
-            <h3 className="text-lg font-semibold text-neutral-900 group-hover:text-brand transition-colors duration-200">
+            <h3 className="text-lg font-semibold text-neutral-900 group-hover:text-brand transition-colors duration-300 ease-in-out">
               {pet.name || 'Adorable Pet'}
             </h3>
             {pet.breed && (
@@ -151,10 +151,10 @@ export default function PetCard({ pet }) {
           {/* Action Button */}
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <span className="inline-flex items-center space-x-2 text-brand font-medium text-sm group-hover:text-brand-600 transition-colors duration-200">
+              <span className="inline-flex items-center space-x-2 text-brand font-medium text-sm group-hover:text-brand-600 transition-colors duration-300 ease-in-out">
                 <span>View Details</span>
                 <svg
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300 ease-in-out"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
