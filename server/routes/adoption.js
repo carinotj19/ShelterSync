@@ -76,6 +76,17 @@ router.get(
   })
 );
 
+// Get all adoption requests (admin only)
+router.get(
+  '/admin/all',
+  authenticate,
+  authorize('admin'),
+  catchAsync(async (req, res) => {
+    const requests = await AdoptionService.getAllRequests();
+    res.json(requests);
+  })
+);
+
 // Get adoption requests for a specific shelter (shelter/admin only)
 router.get(
   '/shelter/:shelterId',

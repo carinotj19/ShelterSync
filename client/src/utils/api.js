@@ -30,11 +30,19 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    const { response } = error;
-    
+    const { response, config } = error;
+    const isAuthRoute =
+      config?.url?.includes('/auth/login') ||
+      config?.url?.includes('/auth/signup');
+
+    // Let login/signup pages handle errors without redirecting
+    if (isAuthRoute) {
+      return Promise.reject(error);
+    }
+
     if (response) {
       const { status, data } = response;
-      
+
       switch (status) {
         case 401:
           // Unauthorized - clear token and redirect to login
@@ -43,33 +51,33 @@ api.interceptors.response.use(
           window.location.href = '/login';
           toast.error('Session expired. Please log in again.');
           break;
-          
+
         case 403:
           toast.error('You do not have permission to perform this action.');
           break;
-          
+
         case 404:
           toast.error('Resource not found.');
           break;
-          
+
         case 429:
           toast.error('Too many requests. Please try again later.');
           break;
-          
+
         case 500:
           toast.error('Server error. Please try again later.');
           break;
-          
+
         default:
           if (data?.message) {
             toast.error(data.message);
           } else if (data?.errors) {
             toast.error(data.errors);
-            const errorMessage = Array.isArray(data.errors) 
+            const errorMessage = Array.isArray(data.errors)
               ? data.errors.join(', ')
               : typeof data.errors === 'object'
-              ? Object.values(data.errors).join(', ')
-              : data.errors;
+                ? Object.values(data.errors).join(', ')
+                : data.errors;
             toast.error(errorMessage);
           } else {
             toast.error('An unexpected error occurred.');
@@ -82,7 +90,7 @@ api.interceptors.response.use(
     } else {
       toast.error('An unexpected error occurred.');
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -133,7 +141,7 @@ export const adoptionAPI = {
 export const uploadImage = async (file) => {
   const formData = new FormData();
   formData.append('image', file);
-  
+
   try {
     const response = await api.post('/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }

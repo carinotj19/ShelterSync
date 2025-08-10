@@ -51,11 +51,11 @@ export default function Login() {
     setLoading(true);
     try {
       const { data } = await authAPI.login(form);
-
+      const userRole = data.data.user.role;
       setToken(data.data.token);
-      setRole(data.data.user.role);
+      setRole(userRole);
       toast.success('Welcome back! 🎉');
-      navigate('/');
+      navigate(userRole === 'admin' ? '/admin' : '/');
     } catch (err) {
       const message = err.response?.data?.message || err.message || 'Login failed';
       toast.error(message);

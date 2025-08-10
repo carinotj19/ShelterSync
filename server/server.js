@@ -104,6 +104,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/pets', require('./routes/pets'));
 app.use('/api/adopt', require('./routes/adoption'));
 app.use('/api/image', require('./routes/images'));
+app.use('/api/auth/admin', require('./routes/admin'));
 
 // Serve static files in production
 if (config.env === 'production') {

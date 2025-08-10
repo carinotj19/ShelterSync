@@ -148,6 +148,28 @@ class AdoptionService {
     }
   }
 
+  // Get all adoption requests (admin)
+  static async getAllRequests() {
+    try {
+      const requests = await AdoptionRequest.find()
+        .populate('pet', 'name')
+        .populate('adopter', 'name email')
+        .populate('shelter', 'name')
+        .sort({ createdAt: -1 });
+
+      logger.info('All adoption requests retrieved successfully', {
+        count: requests.length
+      });
+
+      return requests;
+    } catch (error) {
+      logger.error('Failed to retrieve all adoption requests', {
+        error: error.message
+      });
+      throw error;
+    }
+  }
+
   // Get adoption request by ID
   static async getAdoptionRequestById(requestId, userId, userRole) {
     try {

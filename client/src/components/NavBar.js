@@ -11,7 +11,8 @@ import {
   HiUserAdd,
   HiLogout,
   HiHeart,
-  HiUser
+  HiUser,
+  HiViewGrid
 } from 'react-icons/hi';
 
 export default function NavBar() {
@@ -127,6 +128,12 @@ export default function NavBar() {
                 Pets
               </NavLink>
 
+              {token && role === 'admin' && (
+                <NavLink to="/admin" icon={HiViewGrid}>
+                  Dashboard
+                </NavLink>
+              )}
+
               {token && role === 'shelter' && (
                 <NavLink to="/add" icon={HiPlus}>
                   Add Pet
@@ -188,7 +195,11 @@ export default function NavBar() {
             <MobileNavLink to="/" icon={HiHome} onClick={() => setOpen(false)}>
               Pets
             </MobileNavLink>
-
+            {token && role === 'admin' && (
+              <MobileNavLink to="/admin" icon={HiViewGrid} onClick={() => setOpen(false)}>
+                Dashboard
+              </MobileNavLink>
+            )}
             {token && role === 'shelter' && (
               <MobileNavLink to="/add" icon={HiPlus} onClick={() => setOpen(false)}>
                 Add Pet
