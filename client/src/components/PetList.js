@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PetCard from './PetCard';
-import { 
+import {
   HiSearch, 
   HiRefresh, 
   HiFilter,
@@ -11,6 +11,7 @@ import {
   HiSparkles,
   HiExclamationCircle
 } from 'react-icons/hi';
+import { petsAPI } from '../utils/api';
 
 export default function PetList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,18 +28,15 @@ export default function PetList() {
     setLoading(true);
     setError('');
     try {
-      const params = new URLSearchParams();
-      if (query) params.append('search', query);
-      if (sortBy !== 'newest') params.append('sort', sortBy);
-      if (filterBy !== 'all') params.append('filter', filterBy);
-      
-      const res = await fetch(`/api/pets?${params.toString()}`);
-      if (!res.ok) throw new Error('Failed to fetch pets');
-      
-      const data = await res.json();
+      const params = {};
+      if (query) params.search = query;
+      if (sortBy !== 'newest') params.sort = sortBy;
+      if (filterBy !== 'all') params.filter = filterBy;
+
+      const { data } = await petsAPI.getPets(params);
       setPets(data.data?.pets || data.pets || data || []);
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }

@@ -119,8 +119,10 @@ const requestLogger = (req, res, next) => {
 
 // CORS configuration
 const parseAllowed = (env) =>
-  (env ? env.split(',') : ['http://localhost:3000', 'http://localhost:3001'])
-    .map(s => s.trim().replace(/\/+$/, '').toLowerCase());
+  (env
+    ? env.split(',')
+    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5000'])
+    .map((s) => s.trim().replace(/\/+$/, '').toLowerCase());
 
 const allowedOrigins = parseAllowed(process.env.ALLOWED_ORIGINS);
 

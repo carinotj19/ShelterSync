@@ -65,6 +65,12 @@ api.interceptors.response.use(
             toast.error(data.message);
           } else if (data?.errors) {
             toast.error(data.errors);
+            const errorMessage = Array.isArray(data.errors) 
+              ? data.errors.join(', ')
+              : typeof data.errors === 'object'
+              ? Object.values(data.errors).join(', ')
+              : data.errors;
+            toast.error(errorMessage);
           } else {
             toast.error('An unexpected error occurred.');
           }

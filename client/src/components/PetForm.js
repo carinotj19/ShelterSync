@@ -1,6 +1,6 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../AuthContext';
+import { petsAPI } from '../utils/api';
 
 /**
  * Form for shelters to create new pet listings. File input allows
@@ -8,7 +8,6 @@ import { AuthContext } from '../AuthContext';
  * After successful creation the user is redirected to the pet list.
  */
 export default function PetForm() {
-  const { token } = useContext(AuthContext);
   const [name, setName] = useState('');
   const [breed, setBreed] = useState('');
   const [age, setAge] = useState('');
@@ -29,19 +28,10 @@ export default function PetForm() {
     if (healthNotes) formData.append('healthNotes', healthNotes);
     if (image) formData.append('image', image);
     try {
-      const res = await fetch('/api/pets', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Failed to create pet');
-      } else {
-        navigate('/');
-      }
+      await petsAPI.createPet(formData);
+      navigate('/');
     } catch (err) {
-      setError('Failed to create pet');
+      setError(err.response?.data?.message || 'Failed to create pet');
     }
   };
 

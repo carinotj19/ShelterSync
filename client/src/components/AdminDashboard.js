@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../AuthContext';
 import toast from 'react-hot-toast';
+import api from '../utils/api';
 
 /**
  * Admin dashboard for managing the entire platform.
@@ -25,23 +26,15 @@ export default function AdminDashboard() {
     const fetchAdminData = async () => {
       try {
         // Fetch users
-        const usersRes = await fetch('/auth/admin/users', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const usersData = await usersRes.json();
-        if (usersRes.ok) setUsers(usersData);
+        const { data: usersData } = await api.get('/auth/admin/users');
+        setUsers(usersData);
 
-        // Fetch all pets
-        const petsRes = await fetch('/pets');
-        const petsData = await petsRes.json();
-        if (petsRes.ok) setPets(petsData);
+        const { data: petsData } = await api.get('/pets');
+        setPets(petsData);
 
         // Fetch all adoption requests
-        const requestsRes = await fetch('/adopt/admin/all', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const requestsData = await requestsRes.json();
-        if (requestsRes.ok) setRequests(requestsData);
+        const { data: requestsData } = await api.get('/adopt/admin/all');
+        setRequests(requestsData);
 
         // Calculate stats
         setStats({
@@ -63,47 +56,25 @@ export default function AdminDashboard() {
   // Delete user
   const deleteUser = async (userId) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
-    
+
     try {
-      const res = await fetch(`/auth/admin/users/${userId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      if (res.ok) {
-        toast.success('User deleted successfully');
-        setUsers(users.filter(u => u._id !== userId));
-        setStats(prev => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
-      } else {
-        const data = await res.json();
-        toast.error(data.error || 'Failed to delete user');
-      }
-    } catch (err) {
-      toast.error('Failed to delete user');
-    }
+      await api.delete(`/auth/admin/users/${userId}`);
+      toast.success('User deleted successfully');
+      setUsers(users.filter(u => u._id !== userId));
+      setStats(prev => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
+    } catch (err) { }
   };
 
   // Delete pet
   const deletePet = async (petId) => {
     if (!window.confirm('Are you sure you want to delete this pet?')) return;
-    
+
     try {
-      const res = await fetch(`/pets/${petId}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      
-      if (res.ok) {
-        toast.success('Pet deleted successfully');
-        setPets(pets.filter(p => p._id !== petId));
-        setStats(prev => ({ ...prev, totalPets: prev.totalPets - 1 }));
-      } else {
-        const data = await res.json();
-        toast.error(data.error || 'Failed to delete pet');
-      }
-    } catch (err) {
-      toast.error('Failed to delete pet');
-    }
+      await api.delete(`/pets/${petId}`);
+      toast.success('Pet deleted successfully');
+      setPets(pets.filter(p => p._id !== petId));
+      setStats(prev => ({ ...prev, totalPets: prev.totalPets - 1 }));
+    } catch (err) {  }
   };
 
   if (loading) {
@@ -139,41 +110,37 @@ export default function AdminDashboard() {
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'overview'
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'overview'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Overview
           </button>
           <button
             onClick={() => setActiveTab('users')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'users'
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'users'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Users
           </button>
           <button
             onClick={() => setActiveTab('pets')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'pets'
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'pets'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Pets
           </button>
           <button
             onClick={() => setActiveTab('requests')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'requests'
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'requests'
                 ? 'border-blue-500 text-blue-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Adoption Requests
           </button>
@@ -196,13 +163,12 @@ export default function AdminDashboard() {
                       {new Date(request.createdAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <span className={`px-2 py-1 text-xs rounded ${
-                    request.status === 'pending'
+                  <span className={`px-2 py-1 text-xs rounded ${request.status === 'pending'
                       ? 'bg-yellow-100 text-yellow-800'
                       : request.status === 'approved'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
                     {request.status}
                   </span>
                 </div>
@@ -240,13 +206,12 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded ${
-                      user.role === 'admin'
+                    <span className={`px-2 py-1 text-xs rounded ${user.role === 'admin'
                         ? 'bg-purple-100 text-purple-800'
                         : user.role === 'shelter'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
                       {user.role}
                     </span>
                   </td>
@@ -333,13 +298,12 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
-                <span className={`px-3 py-1 text-sm rounded ${
-                  request.status === 'pending'
+                <span className={`px-3 py-1 text-sm rounded ${request.status === 'pending'
                     ? 'bg-yellow-100 text-yellow-800'
                     : request.status === 'approved'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
-                }`}>
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}>
                   {request.status}
                 </span>
               </div>

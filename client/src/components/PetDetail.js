@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
+import { petsAPI, adoptionAPI } from '../utils/api';
 
 /**
  * Shows detailed information for a single pet. Adopters can submit an
@@ -9,7 +10,7 @@ import { AuthContext } from '../AuthContext';
  */
 export default function PetDetail() {
   const { id } = useParams();
-  const { token, role } = useContext(AuthContext);
+  const { role } = useContext(AuthContext);
   const [pet, setPet] = useState(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -17,9 +18,9 @@ export default function PetDetail() {
 
   // Fetch the pet details on mount
   useEffect(() => {
-    fetch(`/api/pets/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
+    petsAPI
+      .getPet(id)
+      .then(({ data }) => {
         setPet(data);
         setError('');
       })
@@ -32,23 +33,11 @@ export default function PetDetail() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`/api/adopt/${id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ message }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || 'Request failed');
-      } else {
-        setSuccess('Request sent!');
-        setMessage('');
-      }
+      await adoptionAPI.createRequest(id, { message });
+      setSuccess('Request sent!');
+      setMessage('');
     } catch (err) {
-      setError('Request failed');
+      setError(err.response?.data?.message || 'Request failed');
     }
   };
 

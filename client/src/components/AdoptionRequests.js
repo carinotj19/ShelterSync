@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState, useCallback } from 'react';
-import { AuthContext } from '../AuthContext';
+import { useEffect, useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
+import api from '../utils/api';
 
 /**
  * Component for shelters to view and manage adoption requests for their pets.
@@ -8,7 +8,6 @@ import toast from 'react-hot-toast';
  * update request status.
  */
 export default function AdoptionRequests() {
-  const { token } = useContext(AuthContext);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, pending, approved, rejected
@@ -17,23 +16,14 @@ export default function AdoptionRequests() {
   // Fetch adoption requests for the shelter
   const fetchRequests = useCallback(async () => {
     try {
-      const res = await fetch('/adopt/shelter/requests', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setRequests(data);
-      } else {
-        toast.error(data.error || 'Failed to fetch requests');
-      }
+      const { data } = await api.get('/adopt/shelter/requests');
+      setRequests(data);
     } catch (err) {
       toast.error('Failed to fetch requests');
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     fetchRequests();
@@ -43,24 +33,12 @@ export default function AdoptionRequests() {
   const updateRequestStatus = async (requestId, status) => {
     setUpdating(requestId);
     try {
-      const res = await fetch(`/adopt/${requestId}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        toast.success(`Request ${status}`);
-        // Update local state
-        setRequests(requests.map(req => 
-          req._id === requestId ? { ...req, status } : req
-        ));
-      } else {
-        toast.error(data.error || 'Failed to update request');
-      }
+      await api.patch(`/adopt/${requestId}/status`, { status });
+      toast.success(`Request ${status}`);
+      // Update local state
+      setRequests(requests.map(req =>
+        req._id === requestId ? { ...req, status } : req
+      ));
     } catch (err) {
       toast.error('Failed to update request');
     } finally {
@@ -94,46 +72,42 @@ export default function AdoptionRequests() {
   return (
     <div className="max-w-6xl mx-auto p-4">
       <h2 className="text-2xl font-bold mb-6">Adoption Requests</h2>
-      
+
       {/* Filter buttons */}
       <div className="mb-6 flex gap-2">
         <button
           onClick={() => setFilter('all')}
-          className={`px-4 py-2 rounded ${
-            filter === 'all' 
-              ? 'bg-blue-500 text-white' 
+          className={`px-4 py-2 rounded ${filter === 'all'
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 hover:bg-gray-300'
-          }`}
+            }`}
         >
           All ({requests.length})
         </button>
         <button
           onClick={() => setFilter('pending')}
-          className={`px-4 py-2 rounded ${
-            filter === 'pending' 
-              ? 'bg-yellow-500 text-white' 
+          className={`px-4 py-2 rounded ${filter === 'pending'
+              ? 'bg-yellow-500 text-white'
               : 'bg-gray-200 hover:bg-gray-300'
-          }`}
+            }`}
         >
           Pending ({requests.filter(r => r.status === 'pending').length})
         </button>
         <button
           onClick={() => setFilter('approved')}
-          className={`px-4 py-2 rounded ${
-            filter === 'approved' 
-              ? 'bg-green-500 text-white' 
+          className={`px-4 py-2 rounded ${filter === 'approved'
+              ? 'bg-green-500 text-white'
               : 'bg-gray-200 hover:bg-gray-300'
-          }`}
+            }`}
         >
           Approved ({requests.filter(r => r.status === 'approved').length})
         </button>
         <button
           onClick={() => setFilter('rejected')}
-          className={`px-4 py-2 rounded ${
-            filter === 'rejected' 
-              ? 'bg-red-500 text-white' 
+          className={`px-4 py-2 rounded ${filter === 'rejected'
+              ? 'bg-red-500 text-white'
               : 'bg-gray-200 hover:bg-gray-300'
-          }`}
+            }`}
         >
           Rejected ({requests.filter(r => r.status === 'rejected').length})
         </button>
@@ -176,13 +150,12 @@ export default function AdoptionRequests() {
                             {request.adopter.name}
                           </h4>
                           <span
-                            className={`px-2 py-1 text-xs rounded ${
-                              request.status === 'pending'
+                            className={`px-2 py-1 text-xs rounded ${request.status === 'pending'
                                 ? 'bg-yellow-100 text-yellow-800'
                                 : request.status === 'approved'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-red-100 text-red-800'
+                              }`}
                           >
                             {request.status}
                           </span>

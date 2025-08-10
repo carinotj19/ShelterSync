@@ -5,6 +5,7 @@ import { HiEye, HiEyeOff, HiMail, HiLockClosed, HiSparkles } from 'react-icons/h
 import AuthLayout from './AuthLayout';
 import { AuthContext } from '../AuthContext';
 import toast from 'react-hot-toast';
+import { authAPI } from '../utils/api';
 
 export default function Login() {
   const { setToken, setRole } = useContext(AuthContext);
@@ -49,25 +50,16 @@ export default function Login() {
     
     setLoading(true);
     try {
-      const res = await fetch('/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || 'Login failed');
-      }
-      
-      setToken(data.token);
-      setRole(data.role);
+      const { data } = await authAPI.login(form);
+
+      setToken(data.data.token);
+      setRole(data.data.user.role);
       toast.success('Welcome back! 🎉');
       navigate('/');
     } catch (err) {
-      toast.error(err.message);
-      setErrors({ general: err.message });
+      const message = err.response?.data?.message || err.message || 'Login failed';
+      toast.error(message);
+      setErrors({ general: message });
     } finally {
       setLoading(false);
     }

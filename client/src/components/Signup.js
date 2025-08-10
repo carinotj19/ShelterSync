@@ -4,6 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
 import toast from 'react-hot-toast';
+import { authAPI } from '../utils/api';
 
 export default function Signup() {
   const [form, setForm]       = useState({
@@ -23,18 +24,11 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify(form)
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Signup failed');
+      await authAPI.signup(form);
       toast.success('Account created! Please log in.');
       navigate('/login');
-    } catch(err) {
-      toast.error(err.message);
-    } finally {
+    } catch(err) { } 
+    finally {
       setLoading(false);
     }
   };
