@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { petsAPI } from '../utils/api';
 
 /**
@@ -29,53 +30,104 @@ export default function PetForm() {
     if (image) formData.append('image', image);
     try {
       await petsAPI.createPet(formData);
+      toast.success('Pet added successfully');
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create pet');
+      const message = err.response?.data?.message || 'Failed to create pet';
+      setError(message);
+      toast.error(message);
     }
   };
 
   return (
-    <div>
-      <h2>Add a Pet</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
-          required
-        />
-        <input
-          type="text"
-          value={breed}
-          onChange={(e) => setBreed(e.target.value)}
-          placeholder="Breed"
-        />
-        <input
-          type="number"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-          placeholder="Age"
-        />
-        <input
-          type="text"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="Location"
-        />
-        <textarea
-          value={healthNotes}
-          onChange={(e) => setHealthNotes(e.target.value)}
-          placeholder="Health Notes"
-          rows={3}
-        />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
-        <button type="submit">Save</button>
+    <div className="max-w-2xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-6">Add a Pet</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">
+            Name
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input"
+            placeholder="Name"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">
+            Breed
+          </label>
+          <input
+            type="text"
+            value={breed}
+            onChange={(e) => setBreed(e.target.value)}
+            className="input"
+            placeholder="Breed"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">
+            Age
+          </label>
+          <input
+            type="number"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+            className="input"
+            placeholder="Age"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">
+            Location
+          </label>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="input"
+            placeholder="Location"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">
+            Health Notes
+          </label>
+          <textarea
+            value={healthNotes}
+            onChange={(e) => setHealthNotes(e.target.value)}
+            className="input h-24 resize-none"
+            placeholder="Health Notes"
+            rows={3}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-neutral-700">
+            Image
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+            className="input"
+          />
+        </div>
+
+        {error && (
+          <p className="text-error text-sm">{error}</p>
+        )}
+
+        <button type="submit" className="btn-primary">
+          Save
+        </button>
       </form>
       {error && <p className="message error">{error}</p>}
     </div>
