@@ -31,7 +31,7 @@ export default function PetList() {
       const params = {};
       if (query) params.search = query;
       if (sortBy !== 'newest') params.sort = sortBy;
-      if (filterBy !== 'all') params.filter = filterBy;
+      if (filterBy !== 'all') params.status = filterBy;
 
       const { data } = await petsAPI.getPets(params);
       setPets(data.data?.pets || data.pets || data || []);
@@ -233,6 +233,7 @@ export default function PetList() {
                   <option value="all">All Pets</option>
                   <option value="available">Available</option>
                   <option value="pending">Pending Adoption</option>
+                  <option value="adopted">Adopted</option>
                 </select>
               </div>
 

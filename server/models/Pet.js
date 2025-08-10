@@ -144,7 +144,7 @@ petSchema.pre('save', function(next) {
 
 // Static method for search
 petSchema.statics.search = function(query, filters = {}) {
-  const searchQuery = { status: 'available', ...filters };
+  const searchQuery = { ...filters };
 
   if (query) {
     searchQuery.$text = { $search: query };

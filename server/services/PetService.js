@@ -36,9 +36,12 @@ class PetService {
   static async getPets(filters = {}, page = 1, limit = 10, search = '') {
     try {
       const skip = (page - 1) * limit;
-      const query = { status: 'available' };
+      const query = {};
 
       // Apply filters
+      if (filters.status) {
+        query.status = filters.status;
+      }
       if (filters.breed) {
         query.breed = new RegExp(filters.breed, 'i');
       }

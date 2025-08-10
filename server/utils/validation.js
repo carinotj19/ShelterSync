@@ -167,6 +167,7 @@ const petQuerySchema = Joi.object({
   breed: Joi.string().optional(),
   age: Joi.number().integer().min(0).max(30).optional(),
   location: Joi.string().optional(),
+  status: Joi.string().valid('available', 'pending', 'adopted').optional(),
   search: Joi.string().optional(),
   page: Joi.number().integer().min(1).default(1).optional(),
   limit: Joi.number().integer().min(1).max(100).default(10).optional()

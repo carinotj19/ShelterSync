@@ -36,7 +36,11 @@ const BREEDS = [
   'Labrador Retriever', 'Beagle', 'Poodle', 'Bulldog', 'German Shepherd',
   'Siamese Cat', 'Domestic Shorthair', 'Boxer', 'Persian Cat', 'Chihuahua'
 ];
+// Possible statuses for adoption requests.
 const STATUSES = ['pending', 'approved', 'rejected', 'withdrawn'];
+
+// Possible statuses for pets themselves so the UI can demonstrate all cases.
+const PET_STATUSES = ['available', 'pending', 'adopted'];
 
 async function seed() {
   console.log('Starting database seed...');
@@ -120,7 +124,7 @@ async function seed() {
           houseTrained: Math.random() < 0.5,
           goodWithKids: Math.random() < 0.5,
           goodWithPets: Math.random() < 0.5,
-          status: 'available'
+          status: PET_STATUSES[Math.floor(Math.random() * PET_STATUSES.length)]
         });
         petCounter++;
       }
