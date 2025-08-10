@@ -3,10 +3,7 @@ import { HiHeart, HiSparkles } from 'react-icons/hi';
 
 export default function AuthLayout({ title, subtitle, illustration, children }) {
   return (
-    <div className="min-h-screen flex bg-waves relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="blob -top-20 -left-20 w-72 h-72 bg-brand-200" />
-      <div className="blob -bottom-20 -right-20 w-80 h-80 bg-accent-200" />
+    <div className="min-h-screen flex relative overflow-hidden">
       
       {/* Illustration column (hidden on small) */}
       <div className="hidden lg:flex flex-1 items-center justify-center p-12 relative z-10">

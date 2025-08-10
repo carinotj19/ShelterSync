@@ -46,7 +46,11 @@ export default function PetCard({ pet }) {
 
           {/* Pet Image */}
           <img
-            src={pet.imageUrl || pet.imageURL || '/api/placeholder/400/300'}
+            src={
+              pet.imageUrl ||
+              pet.imageURL ||
+              'https://placehold.co/400x300?text=No+Image'
+            }
             alt={`${pet.name || pet.breed} - Available for adoption`}
             className={`
               h-full w-full object-cover transition-all duration-500 group-hover:scale-110
