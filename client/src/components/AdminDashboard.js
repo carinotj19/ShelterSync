@@ -29,8 +29,9 @@ export default function AdminDashboard() {
         const { data: usersData } = await api.get('/auth/admin/users');
         setUsers(usersData);
 
-        const { data: petsData } = await api.get('/pets');
-        setPets(petsData);
+        const { data: petsRes } = await api.get('/pets');
+        const petsList = petsRes?.data?.pets || [];
+        setPets(petsList);
 
         // Fetch all adoption requests
         const { data: requestsData } = await api.get('/adopt/admin/all');
@@ -39,7 +40,7 @@ export default function AdminDashboard() {
         // Calculate stats
         setStats({
           totalUsers: usersData.length || 0,
-          totalPets: petsData.length || 0,
+          totalPets: petsList.length || 0,
           totalRequests: requestsData.length || 0,
           pendingRequests: requestsData.filter(r => r.status === 'pending').length || 0,
         });
