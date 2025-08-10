@@ -14,6 +14,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [remember, setRemember] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,34 +27,44 @@ export default function Login() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!form.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
       newErrors.email = 'Please enter a valid email';
     }
-    
+
     if (!form.password) {
       newErrors.password = 'Password is required';
     } else if (form.password.length < 6) {
       newErrors.password = 'Password must be at least 6 characters';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
     try {
       const { data } = await authAPI.login(form);
       const userRole = data.data.user.role;
-      setToken(data.data.token);
+      const token = data.data.token;               // grab token once
+      setToken(token);
       setRole(userRole);
+
+      const payload = JSON.stringify({ token, role: userRole });
+      if (remember) {
+        localStorage.setItem('auth', payload);
+        sessionStorage.removeItem('auth');
+      } else {
+        sessionStorage.setItem('auth', payload);
+        localStorage.removeItem('auth');
+      }
       toast.success('Welcome back! 🎉');
       navigate(userRole === 'admin' ? '/admin' : '/');
     } catch (err) {
@@ -152,6 +163,8 @@ export default function Login() {
             <input
               type="checkbox"
               className="w-4 h-4 text-brand border-neutral-300 rounded focus:ring-brand focus:ring-2"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
             />
             <span className="text-sm text-neutral-600">Remember me</span>
           </label>

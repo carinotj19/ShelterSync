@@ -19,7 +19,7 @@ const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 // Enhanced 404 page
 function NotFound() {
   return (
-    <div className="min-h-screen bg-waves flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="text-center max-w-md">
         <div className="w-24 h-24 mx-auto mb-8 bg-neutral-100 rounded-full flex items-center justify-center">
           <HiExclamationCircle className="w-12 h-12 text-neutral-400" />
@@ -62,7 +62,7 @@ function NotFound() {
 // Enhanced loading component
 function LoadingSpinner() {
   return (
-    <div className="min-h-screen bg-waves flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="relative">
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-brand to-accent rounded-full flex items-center justify-center animate-pulse">
