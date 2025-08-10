@@ -6,6 +6,7 @@ import { HiExclamationCircle, HiHome, HiSparkles } from 'react-icons/hi';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 import NavBar from './components/NavBar';
+import AmbientBackdrop from "./components/AmbientBackdrop";
 
 // Lazy load all page-level components
 const PetList = lazy(() => import('./components/PetList'));
@@ -82,8 +83,9 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-waves relative">
+      <div className="min-h-screen bg-waves relative">
           {/* Background Elements */}
+          <AmbientBackdrop />
           <div className="blob -top-40 -left-40 w-96 h-96 bg-brand-200" />
           <div className="blob bottom-0 right-0 w-80 h-80 bg-accent-200" />
 

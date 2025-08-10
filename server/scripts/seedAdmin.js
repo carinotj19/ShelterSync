@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Utility script to insert a single administrator into the database.
 //
 // The admin credentials are taken from environment variables ADMIN_EMAIL
@@ -40,4 +41,5 @@ async function seedAdmin() {
   }
 }
 
+// eslint-disable-next-line no-process-exit
 seedAdmin().catch(() => process.exit(1));

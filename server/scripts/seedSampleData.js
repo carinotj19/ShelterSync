@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // This script seeds the MongoDB database with realistic sample data.
 //
 // It reads configuration from environment variables via the existing config
@@ -161,4 +162,5 @@ async function seed() {
   }
 }
 
+// eslint-disable-next-line no-process-exit
 seed().catch(() => process.exit(1));
