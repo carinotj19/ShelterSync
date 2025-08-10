@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { authAPI } from '../utils/api';
 
 export default function Login() {
-  const { setToken, setRole } = useContext(AuthContext);
+  const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -53,18 +53,10 @@ export default function Login() {
     try {
       const { data } = await authAPI.login(form);
       const userRole = data.data.user.role;
-      const token = data.data.token;               // grab token once
-      setToken(token);
-      setRole(userRole);
+      const token = data.data.token; // grab token once
 
-      const payload = JSON.stringify({ token, role: userRole });
-      if (remember) {
-        localStorage.setItem('auth', payload);
-        sessionStorage.removeItem('auth');
-      } else {
-        sessionStorage.setItem('auth', payload);
-        localStorage.removeItem('auth');
-      }
+      // Persist auth based on "remember me" selection
+      setAuth(token, userRole, remember)
       toast.success('Welcome back! 🎉');
       navigate(userRole === 'admin' ? '/admin' : '/');
     } catch (err) {

@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { authAPI } from '../utils/api';
 
 export default function Signup() {
-  const [form, setForm]       = useState({
+  const [form, setForm] = useState({
     name: '',
     email: '',
     password: '',
@@ -15,19 +15,64 @@ export default function Signup() {
     location: ''
   });
   const [loading, setLoading] = useState(false);
-  const navigate              = useNavigate();
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
-  const handleChange = e =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.name.trim()) {
+      newErrors.name = 'Name is required';
+    } else if (form.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    }
+
+    if (!form.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+
+    if (!form.password) {
+      newErrors.password = 'Password is required';
+    } else if (form.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+
+    if (form.location.trim()) {
+      if (form.location.trim().length < 2) {
+        newErrors.location = 'Location must be at least 2 characters';
+      } else if (form.location.trim().length > 100) {
+        newErrors.location = 'Location cannot exceed 100 characters';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!validateForm()) return;
     setLoading(true);
     try {
       await authAPI.signup(form);
       toast.success('Account created! Please log in.');
       navigate('/login');
-    } catch(err) { } 
+    } catch (err) {
+      const message = err.response?.data?.errors || err.response?.data?.message || 'Signup failed';
+      toast.error(message);
+      setErrors({ general: message });
+    }
     finally {
       setLoading(false);
     }
@@ -39,6 +84,11 @@ export default function Signup() {
       illustration="/images/pets-hero.png"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
+        {errors.general && (
+          <div className="bg-error-50 border border-error-200 text-error-700 px-4 py-3 rounded-xl text-sm">
+            {errors.general}
+          </div>
+        )}
         {/* Full Name */}
         <div className="relative z-0">
           <input
@@ -49,12 +99,12 @@ export default function Signup() {
             required
             value={form.name}
             onChange={handleChange}
-            className="
-              peer block w-full border-0 border-b-2 border-gray-300
+            className={`
+              peer block w-full border-0 border-b-2 ${errors.name ? 'border-error-500' : 'border-gray-300'}
               bg-transparent px-0 py-2 text-gray-900
               focus:border-brand focus:outline-none focus:ring-0
               transition
-            "
+            `}
           />
           <label
             htmlFor="name"
@@ -68,7 +118,7 @@ export default function Signup() {
             Full Name
           </label>
         </div>
-
+        {errors.name && <p className="text-error text-sm mt-1">{errors.name}</p>}
         {/* Email */}
         <div className="relative z-0">
           <input
@@ -79,12 +129,12 @@ export default function Signup() {
             required
             value={form.email}
             onChange={handleChange}
-            className="
-              peer block w-full border-0 border-b-2 border-gray-300
+            className={`
+              peer block w-full border-0 border-b-2 ${errors.email ? 'border-error-500' : 'border-gray-300'}
               bg-transparent px-0 py-2 text-gray-900
               focus:border-brand focus:outline-none focus:ring-0
               transition
-            "
+            `}
           />
           <label
             htmlFor="email"
@@ -98,7 +148,7 @@ export default function Signup() {
             Email address
           </label>
         </div>
-
+        {errors.email && <p className="text-error text-sm mt-1">{errors.email}</p>}
         {/* Password */}
         <div className="relative z-0">
           <input
@@ -109,12 +159,12 @@ export default function Signup() {
             required
             value={form.password}
             onChange={handleChange}
-            className="
-              peer block w-full border-0 border-b-2 border-gray-300
+            className={`
+              peer block w-full border-0 border-b-2 ${errors.password ? 'border-error-500' : 'border-gray-300'}
               bg-transparent px-0 py-2 text-gray-900
               focus:border-brand focus:outline-none focus:ring-0
               transition
-            "
+            `}
           />
           <label
             htmlFor="password"
@@ -128,7 +178,7 @@ export default function Signup() {
             Password
           </label>
         </div>
-
+        {errors.password && <p className="text-error text-sm mt-1">{errors.password}</p>}
         {/* Role select */}
         <div className="relative z-0">
           <select
