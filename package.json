@@ -5,6 +5,9 @@
   "scripts": {
     "server": "cd server && nodemon server.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "test": "npm test --prefix client",
+    "test:coverage": "npm run test:coverage --prefix client",
+    "test:ci": "npm run test:ci --prefix client"
   }
 }

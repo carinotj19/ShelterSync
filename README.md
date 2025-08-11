@@ -40,6 +40,21 @@ Start the development environment:
 npm run dev
 ```
 
+## Testing
+
+Run the client test suite:
+
+```bash
+npm test
+```
+
+Additional test commands are available:
+
+```bash
+npm run test:coverage
+npm run test:ci
+```
+
 ## Creating an Admin User
 
 To create an admin user, run the seed script:
