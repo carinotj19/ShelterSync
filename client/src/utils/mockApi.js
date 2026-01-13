@@ -35,9 +35,9 @@ let currentUserId = extractUserIdFromToken();
 
 const scrubUser = (user) => {
   if (!user) return null;
-  // Do not expose password in mock responses
-  const { password: _password, ...rest } = user;
-  return rest;
+  const sanitized = { ...user };
+  delete sanitized.password;
+  return sanitized;
 };
 
 const getCurrentUser = () => {
