@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { HiHeart, HiSparkles } from 'react-icons/hi';
 
 export default function AuthLayout({ title, subtitle, illustration, children }) {
@@ -88,9 +89,9 @@ export default function AuthLayout({ title, subtitle, illustration, children }) 
           <div className="mt-6 text-center">
             <p className="text-xs text-neutral-500">
               By continuing, you agree to our{' '}
-              <a href="/terms" className="text-brand hover:underline">Terms of Service</a>
+              <Link to="/terms" className="text-brand hover:underline">Terms of Service</Link>
               {' '}and{' '}
-              <a href="/privacy" className="text-brand hover:underline">Privacy Policy</a>
+              <Link to="/privacy" className="text-brand hover:underline">Privacy Policy</Link>
             </p>
           </div>
         </div>

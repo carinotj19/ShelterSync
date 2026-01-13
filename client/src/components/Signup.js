@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaFacebookF } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
 import toast from 'react-hot-toast';
 import { authAPI } from '../utils/api';
@@ -285,9 +285,9 @@ export default function Signup() {
         {/* Link to login */}
         <p className="text-center text-sm text-gray-600 mt-4">
           Already have an account?{' '}
-          <a href="/login" className="text-brand hover:underline">
+          <Link to="/login" className="text-brand hover:underline">
             Log in
-          </a>
+          </Link>
         </p>
       </form>
     </AuthLayout>

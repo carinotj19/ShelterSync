@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { HiExclamationCircle, HiHome, HiSparkles } from 'react-icons/hi';
 
@@ -39,19 +39,19 @@ function NotFound() {
         </p>
 
         <div className="space-y-3">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="btn-primary inline-flex items-center space-x-2"
           >
             <HiHome className="w-5 h-5" />
             <span>Go Home</span>
-          </a>
+          </Link>
 
           <p className="text-sm text-neutral-500">
             Or browse our{' '}
-            <a href="/" className="text-brand hover:underline">
+            <Link to="/" className="text-brand hover:underline">
               available pets
-            </a>
+            </Link>
           </p>
         </div>
       </div>
