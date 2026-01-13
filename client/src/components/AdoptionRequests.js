@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import api from '../utils/api';
+import { adoptionAPI } from '../utils/api';
 
 /**
  * Component for shelters to view and manage adoption requests for their pets.
@@ -16,8 +16,9 @@ export default function AdoptionRequests() {
   // Fetch adoption requests for the shelter
   const fetchRequests = useCallback(async () => {
     try {
-      const { data } = await api.get('/adopt/shelter/requests');
-      setRequests(data);
+      const { data } = await adoptionAPI.getShelterRequests();
+      const payload = data?.data?.requests || data?.requests || data || [];
+      setRequests(payload);
     } catch (err) {
       toast.error('Failed to fetch requests');
     } finally {
@@ -33,7 +34,7 @@ export default function AdoptionRequests() {
   const updateRequestStatus = async (requestId, status) => {
     setUpdating(requestId);
     try {
-      await api.patch(`/adopt/${requestId}/status`, { status });
+      await adoptionAPI.updateRequestStatus(requestId, status);
       toast.success(`Request ${status}`);
       // Update local state
       setRequests(requests.map(req =>

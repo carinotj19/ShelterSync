@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../AuthContext';
 import toast from 'react-hot-toast';
-import api from '../utils/api';
+import { adminAPI, petsAPI } from '../utils/api';
 
 /**
  * Admin dashboard for managing the entire platform.
@@ -24,25 +24,29 @@ export default function AdminDashboard() {
   // Fetch all data for admin dashboard
   useEffect(() => {
     const fetchAdminData = async () => {
+      setLoading(true);
       try {
-        // Fetch users
-        const { data: usersData } = await api.get('/auth/admin/users');
-        setUsers(usersData);
+        const [{ data: usersRes }, { data: petsRes }, { data: requestsRes }] =
+          await Promise.all([
+            adminAPI.getUsers(),
+            petsAPI.getPets(),
+            adminAPI.getAllRequests(),
+          ]);
 
-        const { data: petsRes } = await api.get('/pets');
-        const petsList = petsRes?.data?.pets || [];
+        const usersList = usersRes?.data?.users || usersRes?.users || usersRes || [];
+        const petsList = petsRes?.data?.pets || petsRes?.pets || petsRes || [];
+        const allRequests = requestsRes?.data?.requests || requestsRes?.requests || requestsRes || [];
+
+        setUsers(usersList);
         setPets(petsList);
-
-        // Fetch all adoption requests
-        const { data: requestsData } = await api.get('/adopt/admin/all');
-        setRequests(requestsData);
+        setRequests(allRequests);
 
         // Calculate stats
         setStats({
-          totalUsers: usersData.length || 0,
+          totalUsers: usersList.length || 0,
           totalPets: petsList.length || 0,
-          totalRequests: requestsData.length || 0,
-          pendingRequests: requestsData.filter(r => r.status === 'pending').length || 0,
+          totalRequests: allRequests.length || 0,
+          pendingRequests: allRequests.filter(r => r.status === 'pending').length || 0,
         });
       } catch (err) {
         toast.error('Failed to fetch admin data');
@@ -59,7 +63,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      await api.delete(`/auth/admin/users/${userId}`);
+      await adminAPI.deleteUser(userId);
       toast.success('User deleted successfully');
       setUsers(users.filter(u => u._id !== userId));
       setStats(prev => ({ ...prev, totalUsers: prev.totalUsers - 1 }));
@@ -71,7 +75,7 @@ export default function AdminDashboard() {
     if (!window.confirm('Are you sure you want to delete this pet?')) return;
 
     try {
-      await api.delete(`/pets/${petId}`);
+      await petsAPI.deletePet(petId);
       toast.success('Pet deleted successfully');
       setPets(pets.filter(p => p._id !== petId));
       setStats(prev => ({ ...prev, totalPets: prev.totalPets - 1 }));

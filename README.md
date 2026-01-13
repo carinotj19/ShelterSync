@@ -40,6 +40,22 @@ Start the development environment:
 npm run dev
 ```
 
+## Frontend-only demo (no backend)
+
+If you just need a click-through demo (e.g., GitHub Pages), the React app can run entirely in the browser with mock data:
+
+- Build with `REACT_APP_USE_MOCK=true` so no API calls are made. In production builds without `REACT_APP_API_URL`, mock mode is enabled automatically.
+- Demo accounts (password `demo123`):
+  - Admin: `admin@sheltersync.com`
+  - Shelter: `shelter@sheltersync.com`
+  - Adopter: `adopter@sheltersync.com`
+- Limitations: no real auth, persistence, uploads, or email. Data resets on refresh and image uploads use placeholders.
+- Deploy the static bundle from `client/build/` to GitHub Pages or any static host:
+  ```bash
+  REACT_APP_USE_MOCK=true npm run build --prefix client
+  # publish the contents of client/build to your static host or gh-pages branch
+  ```
+
 ## Testing
 
 Run the client test suite:
