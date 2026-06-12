@@ -1,6 +1,9 @@
 # ShelterSync
 ShelterSync is a MERN stack pet adoption platform. It features user authentication with JWT, CRUD APIs for pet profiles with image upload using GridFS, search and filter capabilities, and an adoption request workflow that emails shelters when someone is interested in a pet.
 
+## Preview
+https://carinotj19.github.io/ShelterSync/#/
+
 ## Features
 
 - **User Roles**: Three distinct user types - Adopters, Shelters, and Admins
